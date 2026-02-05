@@ -1,0 +1,3746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>节日倒计时 - 天空效果测试</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============ Reset & Base ============ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: transparent;
+            color: #202124;
+            font-size: 14px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            transition: background 0.5s ease;
+        }
+
+        /* Background Pattern Layer - hidden */
+        .background-pattern {
+            display: none;
+        }
+
+        .background-pattern::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.15;
+            transition: opacity 0.5s ease, background 0.5s ease;
+        }
+
+        /* Pattern: Lanterns - for Spring Festival, Lantern Festival */
+        .background-pattern.pattern-lanterns::before {
+            background-image:
+                radial-gradient(ellipse 40px 60px at 20% 15%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 35px 50px at 80% 25%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 30px 45px at 50% 70%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 25px 40px at 15% 80%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 38px 55px at 85% 75%, currentColor 0%, transparent 60%);
+            background-size: 100% 100%;
+        }
+
+        /* Pattern: Hearts - for Valentine's Day */
+        .background-pattern.pattern-hearts::before {
+            background-image:
+                radial-gradient(circle 25px at 15% 20%, currentColor 0%, transparent 50%),
+                radial-gradient(circle 20px at 75% 15%, currentColor 0%, transparent 50%),
+                radial-gradient(circle 30px at 40% 60%, currentColor 0%, transparent 50%),
+                radial-gradient(circle 18px at 85% 70%, currentColor 0%, transparent 50%),
+                radial-gradient(circle 22px at 25% 85%, currentColor 0%, transparent 50%),
+                radial-gradient(circle 28px at 65% 90%, currentColor 0%, transparent 50%);
+            background-size: 100% 100%;
+        }
+
+        /* Pattern: Snowflakes - for Christmas */
+        .background-pattern.pattern-snowflakes::before {
+            background-image:
+                radial-gradient(circle 8px at 10% 10%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 12px at 30% 25%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 6px at 50% 5%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 10px at 70% 20%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 8px at 90% 15%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 14px at 20% 50%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 10px at 45% 45%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 12px at 75% 55%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 8px at 5% 75%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 10px at 35% 80%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 14px at 60% 70%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 8px at 85% 85%, currentColor 0%, transparent 70%);
+            background-size: 100% 100%;
+        }
+
+        /* Pattern: Stars - for Qixi, Mid-Autumn */
+        .background-pattern.pattern-stars::before {
+            background-image:
+                radial-gradient(circle 4px at 15% 10%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 6px at 35% 20%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 3px at 55% 8%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 5px at 75% 25%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 4px at 90% 12%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 7px at 10% 45%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 4px at 30% 55%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 5px at 50% 40%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 6px at 70% 50%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 3px at 88% 42%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 5px at 20% 75%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 4px at 45% 85%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 6px at 65% 78%, currentColor 0%, transparent 80%),
+                radial-gradient(circle 4px at 82% 90%, currentColor 0%, transparent 80%);
+            background-size: 100% 100%;
+        }
+
+        /* Pattern: Leaves - for Qingming, Dragon Boat */
+        .background-pattern.pattern-leaves::before {
+            background-image:
+                radial-gradient(ellipse 15px 35px at 12% 20%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 12px 30px at 35% 10%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 18px 40px at 70% 25%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 14px 32px at 88% 15%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 16px 38px at 25% 55%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 13px 28px at 55% 50%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 17px 36px at 80% 60%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 14px 33px at 10% 85%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 15px 35px at 45% 80%, currentColor 0%, transparent 60%),
+                radial-gradient(ellipse 12px 30px at 75% 90%, currentColor 0%, transparent 60%);
+            background-size: 100% 100%;
+        }
+
+        /* Pattern: Fireworks - for New Year, National Day, Labor Day */
+        .background-pattern.pattern-fireworks::before {
+            background-image:
+                radial-gradient(circle 50px at 20% 20%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 40px at 75% 15%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 60px at 50% 50%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 35px at 15% 70%, currentColor 0%, transparent 70%),
+                radial-gradient(circle 45px at 80% 75%, currentColor 0%, transparent 70%);
+            background-size: 100% 100%;
+        }
+
+        /* ============ Page Title ============ */
+        .page-title {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 16px 32px;
+            background-color: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .page-title.night-mode {
+            background-color: rgba(0, 0, 0, 0.12);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .page-title h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--primary-color, #dc2626);
+            margin: 0;
+            transition: color 0.5s ease;
+        }
+
+        /* Icon-only Festival Selector - circular button with chevron */
+        .festival-select-icon {
+            position: relative;
+            width: 28px;
+            height: 28px;
+            border: 1.5px solid var(--primary-color, #dc2626);
+            border-radius: 50%;
+            background: transparent;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+            opacity: 0.7;
+            /* Hide default select arrow */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            /* Make text transparent so only custom arrow shows */
+            color: transparent;
+            text-indent: -9999px;
+        }
+
+        .festival-select-icon:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        .festival-select-icon:focus {
+            opacity: 1;
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
+        }
+
+        /* Chevron arrow wrapper */
+        .select-icon-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .select-icon-wrapper::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -60%) rotate(45deg);
+            width: 7px;
+            height: 7px;
+            border-right: 2px solid var(--primary-color, #dc2626);
+            border-bottom: 2px solid var(--primary-color, #dc2626);
+            pointer-events: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .page-title .subtitle {
+            font-size: 14px;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        /* ============ Countdown Card ============ */
+        .countdown-card {
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 32px 48px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 700px;
+            width: 100%;
+            transition: border-color 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
+            margin-top: 0px;
+        }
+
+        .countdown-card.night-mode {
+            background-color: rgba(30, 20, 10, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* ============ Countdown Display ============ */
+        .countdown-display {
+            text-align: center;
+            padding: 16px 0;
+        }
+
+        .countdown-label {
+            font-size: 16px;
+            color: #444;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .countdown-time {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 50px;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            cursor: default;
+        }
+
+        .time-unit:hover {
+            transform: scale(1.15);
+            filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.3));
+            z-index: 10;
+        }
+
+        .time-value {
+            font-size: 36px;
+            font-weight: 300;
+            color: var(--primary-color, #dc2626);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+            transition: color 0.5s ease;
+        }
+
+        .time-label {
+            font-size: 12px;
+            color: #555;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Align regular time labels with flip card labels */
+        .time-unit:not(.flip-card) {
+            padding-top: 2px;
+        }
+
+        .time-separator {
+            font-size: 36px;
+            color: var(--secondary-color, #f87171);
+            font-weight: 300;
+            line-height: 1;
+            margin-bottom: 18px;
+            transition: color 0.5s ease;
+        }
+
+        .time-separator-dot {
+            font-size: 36px;
+            color: var(--secondary-color, #f87171);
+            font-weight: 300;
+            line-height: 1;
+            margin-bottom: 18px;
+            transition: color 0.5s ease;
+        }
+
+        /* ============ Flip Card Calendar Styles ============ */
+        .flip-card {
+            perspective: 300px;
+        }
+
+        .flip-card .flip-card-inner {
+            position: relative;
+            width: 56px;
+            height: 64px;
+            background: linear-gradient(180deg, var(--primary-color, #dc2626) 0%, var(--primary-dark, #b91c1c) 50%, var(--primary-color, #dc2626) 50%, var(--secondary-color, #ef4444) 100%);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: background 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        /* Middle divider line */
+        .flip-card .flip-card-inner::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.15);
+        }
+
+        /* Number inside flip card */
+        .flip-card .time-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Label below flip card */
+        .flip-card .time-label {
+            margin-top: 8px;
+            color: var(--primary-dark, #b91c1c);
+            font-weight: 500;
+            transition: color 0.5s ease;
+        }
+
+        /* Flip card separator - now using dash for calendar look */
+        .flip-separator {
+            font-size: 24px;
+            color: var(--primary-color, #dc2626);
+            font-weight: 400;
+            margin: 0 8px;
+            margin-bottom: 24px;
+            transition: color 0.5s ease;
+        }
+
+        /* Gap between flip cards section and regular time section */
+        .time-section-gap {
+            width: 24px;
+        }
+
+        /* ============ Progress Bar ============ */
+        .progress-section {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color, #fecaca);
+            transition: border-color 0.5s ease;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background-color: var(--progress-bg, #fee2e2);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            transition: background-color 0.5s ease;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color, #f59e0b) 0%, var(--primary-color, #dc2626) 50%, var(--primary-dark, #b91c1c) 100%);
+            border-radius: 6px;
+            transition: width 0.3s ease, background 0.5s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #444;
+        }
+
+        .progress-percent {
+            font-weight: 600;
+            color: var(--primary-color, #dc2626);
+            transition: color 0.5s ease;
+        }
+
+        /* ============ Festival Message ============ */
+        .festival-message {
+            font-size: 28px;
+            color: var(--primary-color, #dc2626);
+            font-weight: 600;
+            transition: color 0.5s ease;
+        }
+
+        /* ============ Query Card ============ */
+        .query-card {
+            position: relative;
+            background-color: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 700px;
+            width: 100%;
+            margin-top: 20px;
+            transition: border-color 0.5s ease, box-shadow 0.5s ease, background-color 0.5s ease;
+        }
+
+        .query-card.night-mode {
+            background-color: rgba(30, 20, 10, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .query-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .query-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background-color: transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .query-item:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: translateX(4px);
+        }
+
+        .query-item:active {
+            transform: translateX(2px);
+        }
+
+        .query-card.night-mode .query-item {
+            background-color: transparent;
+        }
+
+        .query-card.night-mode .query-item:hover {
+            background-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .query-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            flex-shrink: 0;
+            transition: color 0.5s ease;
+        }
+
+        .query-card.night-mode .query-icon {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .query-text {
+            font-size: 14px;
+            font-weight: 400;
+            color: #333;
+            line-height: 1.4;
+            transition: color 0.5s ease;
+        }
+
+        .query-card.night-mode .query-text {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .query-footer {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .query-card.night-mode .query-footer {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .rewards-link {
+            font-size: 12px;
+            color: #666;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .rewards-link:hover {
+            color: #0078d4;
+            text-decoration: underline;
+        }
+
+        .query-card.night-mode .rewards-link {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .query-card.night-mode .rewards-link:hover {
+            color: #4da6ff;
+        }
+
+        @media (max-width: 480px) {
+            .query-card {
+                padding: 16px;
+                margin-top: 16px;
+            }
+
+            .query-item {
+                padding: 8px 10px;
+                gap: 10px;
+            }
+
+            .query-text {
+                font-size: 13px;
+            }
+
+            .query-icon svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        /* ============ Decorative Elements ============ */
+        .decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .decoration-item {
+            position: absolute;
+            opacity: 0.15;
+            transition: opacity 0.5s ease;
+        }
+
+        .decoration-item.lantern-left {
+            top: 20px;
+            left: 40px;
+        }
+
+        .decoration-item.lantern-right {
+            top: 20px;
+            right: 40px;
+        }
+
+        /* ============ Footer Link ============ */
+        .footer-link {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .footer-link a {
+            color: #333;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.5s ease;
+        }
+
+        .footer-link a:hover {
+            background: rgba(255, 255, 255, 0.95);
+            text-decoration: underline;
+        }
+
+        /* ============ Responsive ============ */
+        @media (max-width: 768px) {
+            .page-title h1 {
+                font-size: 26px;
+            }
+
+            .festival-select-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .select-icon-wrapper::after {
+                width: 6px;
+                height: 6px;
+            }
+
+            .countdown-card {
+                padding: 24px 20px;
+            }
+
+            .flip-card .flip-card-inner {
+                width: 48px;
+                height: 56px;
+            }
+
+            .flip-card .time-value {
+                font-size: 26px;
+            }
+
+            .time-value {
+                font-size: 28px;
+            }
+
+            .time-separator,
+            .time-separator-dot {
+                font-size: 28px;
+            }
+
+            .time-unit {
+                min-width: 40px;
+            }
+
+            .time-section-gap {
+                width: 12px;
+            }
+
+            .flip-separator {
+                margin: 0 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title-row {
+                gap: 8px;
+            }
+
+            .page-title h1 {
+                font-size: 22px;
+            }
+
+            .festival-select-icon {
+                width: 22px;
+                height: 22px;
+            }
+
+            .select-icon-wrapper::after {
+                width: 5px;
+                height: 5px;
+                border-width: 1.5px;
+            }
+
+            .page-title .subtitle {
+                font-size: 12px;
+            }
+
+            .countdown-time {
+                gap: 2px;
+            }
+
+            .flip-card .flip-card-inner {
+                width: 42px;
+                height: 50px;
+            }
+
+            .flip-card .time-value {
+                font-size: 22px;
+            }
+
+            .time-value {
+                font-size: 24px;
+            }
+
+            .time-separator,
+            .time-separator-dot {
+                font-size: 24px;
+                margin-bottom: 14px;
+            }
+
+            .time-unit:not(.flip-card) {
+                min-width: 36px;
+            }
+        }
+
+        /* ============ Effects Canvas ============ */
+        #effectsCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============ Firework Tubes (Spring Festival) ============ */
+        .firework-tubes {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            pointer-events: none;
+            z-index: 1;
+            display: none; /* Hidden by default, shown only for spring-festival */
+        }
+
+        .firework-tubes.active {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 0 5%;
+        }
+
+        .firework-tube {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.1s ease;
+        }
+
+        .firework-tube.launching {
+            animation: tube-recoil 0.15s ease-out;
+        }
+
+        @keyframes tube-recoil {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(4px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Tube body - cylinder shape */
+        .tube-body {
+            width: 24px;
+            height: 60px;
+            background: linear-gradient(90deg,
+                rgba(139, 0, 0, 0.25) 0%,
+                rgba(139, 0, 0, 0.45) 30%,
+                rgba(139, 0, 0, 0.45) 70%,
+                rgba(139, 0, 0, 0.25) 100%);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            box-shadow: inset 0 -10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Tube opening highlight */
+        .tube-body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 2px;
+            right: 2px;
+            height: 4px;
+            background: rgba(139, 0, 0, 0.6);
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* Muzzle flash effect */
+        .tube-body::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, rgba(255, 200, 50, 0.9) 0%, rgba(255, 150, 0, 0.6) 40%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.05s ease;
+        }
+
+        .firework-tube.launching .tube-body::after {
+            opacity: 1;
+            animation: muzzle-flash 0.2s ease-out;
+        }
+
+        @keyframes muzzle-flash {
+            0% { opacity: 1; transform: translateX(-50%) scale(1); }
+            100% { opacity: 0; transform: translateX(-50%) scale(1.5); }
+        }
+
+        /* Tube base/stand */
+        .tube-base {
+            width: 32px;
+            height: 10px;
+            background: linear-gradient(90deg,
+                rgba(100, 0, 0, 0.3) 0%,
+                rgba(100, 0, 0, 0.5) 30%,
+                rgba(100, 0, 0, 0.5) 70%,
+                rgba(100, 0, 0, 0.3) 100%);
+            border-radius: 2px;
+            margin-top: -1px;
+        }
+
+        /* Decorative rings on tube */
+        .tube-ring {
+            position: absolute;
+            left: -2px;
+            right: -2px;
+            height: 4px;
+            background: linear-gradient(90deg,
+                rgba(212, 175, 55, 0.3) 0%,
+                rgba(212, 175, 55, 0.6) 50%,
+                rgba(212, 175, 55, 0.3) 100%);
+            border-radius: 2px;
+        }
+
+        .tube-ring.top { top: 8px; }
+        .tube-ring.middle { top: 28px; }
+        .tube-ring.bottom { top: 48px; }
+
+        /* Vary tube heights for visual interest */
+        .firework-tube:nth-child(1) .tube-body { height: 55px; }
+        .firework-tube:nth-child(2) .tube-body { height: 65px; }
+        .firework-tube:nth-child(3) .tube-body { height: 70px; }
+        .firework-tube:nth-child(4) .tube-body { height: 62px; }
+        .firework-tube:nth-child(5) .tube-body { height: 58px; }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .firework-tubes {
+                height: 60px;
+            }
+            .tube-body {
+                width: 20px;
+                height: 50px !important;
+            }
+            .tube-base {
+                width: 26px;
+                height: 8px;
+            }
+            .firework-tube:nth-child(1) .tube-body { height: 45px !important; }
+            .firework-tube:nth-child(2) .tube-body { height: 52px !important; }
+            .firework-tube:nth-child(3) .tube-body { height: 55px !important; }
+            .firework-tube:nth-child(4) .tube-body { height: 50px !important; }
+            .firework-tube:nth-child(5) .tube-body { height: 48px !important; }
+        }
+
+        /* ============ Spring Festival Background Image ============ */
+        .spring-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background-image: url('horse_bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .spring-bg.active {
+            opacity: 0; /* Temporarily hidden to show sky effect */
+        }
+
+        /* ============ Dynamic Sky System ============ */
+        /* Sky Gradient Layer - Base background, lowest z-index */
+        .sky-gradient-layer {
+            position: fixed;
+            inset: 0;
+            z-index: -5;
+            transition: background 2s ease;
+            pointer-events: none;
+            background: linear-gradient(180deg, #fdf8f0 0%, #fff9f0 100%);
+        }
+
+        /* Sky Canvas - Stars rendering */
+        #skyCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: -4;
+            pointer-events: none;
+        }
+
+        /* PNG Weather Elements Container */
+        .weather-elements {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Sun PNG - doubled size */
+        .weather-sun {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            opacity: 0;
+            transition: opacity 1s ease;
+            filter: drop-shadow(0 0 40px rgba(255, 200, 100, 0.5));
+        }
+        .weather-sun.visible { opacity: 1; }
+
+        /* Moon PNG - doubled size */
+        .weather-moon {
+            position: absolute;
+            width: 160px;
+            height: 160px;
+            opacity: 0;
+            transition: opacity 1s ease;
+            filter: drop-shadow(0 0 30px rgba(255, 250, 200, 0.4));
+        }
+        .weather-moon.visible { opacity: 1; }
+
+        /* Clouds Container */
+        .clouds-container {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        /* Cloud PNG - slow drift from right to left (east to west) */
+        .weather-cloud {
+            position: absolute;
+            height: auto;
+            opacity: 0.85;
+            transition: opacity 0.5s ease;
+            animation: cloud-drift linear infinite;
+        }
+        @keyframes cloud-drift {
+            from { transform: translateX(100vw); }
+            to { transform: translateX(calc(-100%)); }
+        }
+
+        /* Rain Container */
+        .rain-container {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+        }
+
+        /* Raindrop PNG - doubled size, start from above screen */
+        .weather-raindrop {
+            position: absolute;
+            width: 30px;
+            height: auto;
+            animation: raindrop-fall linear infinite;
+        }
+        @keyframes raindrop-fall {
+            from { transform: translateY(-150px); }
+            to { transform: translateY(calc(100vh + 50px)); }
+        }
+
+        /* Snow Container */
+        .snow-container {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+        }
+
+        /* Snowflake PNG - doubled size, start from above screen */
+        .weather-snowflake {
+            position: absolute;
+            width: 40px;
+            height: auto;
+            animation: snowflake-fall linear infinite;
+        }
+        @keyframes snowflake-fall {
+            from {
+                transform: translateY(-150px) translateX(0) rotate(0deg);
+            }
+            to {
+                transform: translateY(calc(100vh + 50px)) translateX(30px) rotate(360deg);
+            }
+        }
+
+        /* Weather Overlay - Cloud/Rain/Snow overlay tint (lightened) */
+        .weather-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .weather-overlay.cloudy {
+            opacity: 1;
+            background: linear-gradient(180deg,
+                rgba(180, 170, 160, 0.1) 0%,
+                rgba(190, 180, 170, 0.08) 30%,
+                transparent 60%);
+        }
+
+        .weather-overlay.overcast {
+            opacity: 1;
+            background: linear-gradient(180deg,
+                rgba(150, 140, 130, 0.15) 0%,
+                rgba(160, 150, 140, 0.1) 40%,
+                rgba(170, 160, 150, 0.05) 70%,
+                transparent 100%);
+        }
+
+        .weather-overlay.rain {
+            opacity: 1;
+            background: linear-gradient(180deg,
+                rgba(120, 115, 110, 0.2) 0%,
+                rgba(140, 135, 130, 0.15) 30%,
+                rgba(160, 155, 150, 0.08) 60%,
+                transparent 100%);
+        }
+
+        .weather-overlay.snow {
+            opacity: 1;
+            background: linear-gradient(180deg,
+                rgba(240, 238, 235, 0.15) 0%,
+                rgba(245, 243, 240, 0.1) 40%,
+                transparent 80%);
+        }
+
+        .weather-overlay.thunderstorm {
+            opacity: 1;
+            background: linear-gradient(180deg,
+                rgba(100, 95, 90, 0.25) 0%,
+                rgba(120, 115, 110, 0.2) 30%,
+                rgba(140, 135, 130, 0.1) 60%,
+                transparent 100%);
+        }
+
+        /* Content Backdrop - Blur effect behind text */
+        .content-backdrop {
+            position: relative;
+            z-index: 0;
+        }
+
+        /* Title backdrop blur - handled by .page-title directly */
+
+        /* Location/Weather Selector - styled like countdown card (glassmorphism) */
+        .location-selector {
+            position: absolute;
+            top: -48px;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background-color: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 9999px;
+            font-size: 14px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, transform 0.1s ease;
+            cursor: pointer;
+        }
+
+        .location-selector:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+            transform: scale(1.02);
+        }
+
+        .location-selector:active {
+            transform: scale(0.98);
+        }
+
+        /* Night mode for location selector - matches countdown-card.night-mode */
+        .location-selector.night-mode {
+            background-color: rgba(30, 20, 10, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .location-selector.night-mode:hover {
+            background-color: rgba(30, 20, 10, 0.4);
+        }
+
+        .location-selector .weather-icon {
+            font-size: 16px;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .location-selector .temperature {
+            font-size: 14px;
+            font-weight: 400;
+            color: #555;
+            letter-spacing: 0;
+            transition: color 0.5s ease;
+        }
+
+        .location-selector.night-mode .temperature {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .location-selector .city-name {
+            font-size: 14px;
+            font-weight: 400;
+            color: #555;
+            transition: color 0.5s ease;
+        }
+
+        .location-selector.night-mode .city-name {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .location-selector {
+                top: -44px;
+                right: 0;
+                padding: 8px 12px;
+                font-size: 12px;
+                gap: 6px;
+            }
+
+            .location-selector .weather-icon {
+                font-size: 14px;
+            }
+
+            .location-selector .temperature,
+            .location-selector .city-name {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sky Gradient Layer - Dynamic day/night background -->
+    <div class="sky-gradient-layer" id="skyGradient"></div>
+
+    <!-- Sky Canvas - Stars only -->
+    <canvas id="skyCanvas"></canvas>
+
+    <!-- PNG Weather Elements Container -->
+    <div class="weather-elements" id="weatherElements">
+        <!-- Sun - shown during day -->
+        <img class="weather-sun" id="weatherSun" src="weather_png/sun.png" alt="">
+        <!-- Moon - shown during night -->
+        <img class="weather-moon" id="weatherMoon" src="weather_png/moon.png" alt="">
+        <!-- Clouds container - dynamically generated -->
+        <div class="clouds-container" id="cloudsContainer"></div>
+        <!-- Rain container - dynamically generated -->
+        <div class="rain-container" id="rainContainer"></div>
+        <!-- Snow container - dynamically generated -->
+        <div class="snow-container" id="snowContainer"></div>
+    </div>
+
+    <!-- Weather Overlay - Cloud/Rain effects -->
+    <div class="weather-overlay" id="weatherOverlay"></div>
+
+    <style>
+        /* BGM Control Button - matches location-selector style */
+        .bgm-control {
+            position: absolute;
+            top: -48px;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            background-color: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 50%;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease, transform 0.1s ease;
+        }
+
+        .bgm-control:hover {
+            background-color: rgba(255, 255, 255, 0.35);
+            transform: scale(1.02);
+        }
+
+        .bgm-control:active {
+            transform: scale(0.98);
+        }
+
+        .bgm-control.night-mode {
+            background-color: rgba(30, 20, 10, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .bgm-control.night-mode:hover {
+            background-color: rgba(30, 20, 10, 0.4);
+        }
+
+        .bgm-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            transition: color 0.5s ease;
+        }
+
+        .bgm-icon svg {
+            display: block;
+        }
+
+        .bgm-control.night-mode .bgm-icon {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Mute lines visible by default, hidden when playing */
+        .bgm-icon .mute-line {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .bgm-control.playing .mute-line {
+            opacity: 0;
+        }
+
+        /* Sound waves for playing state */
+        .bgm-icon .sound-wave {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .bgm-control.playing .sound-wave {
+            opacity: 1;
+        }
+
+        @media (max-width: 480px) {
+            .bgm-control {
+                top: -44px;
+                left: 0;
+                width: 32px;
+                height: 32px;
+            }
+            .bgm-icon svg {
+                width: 14px;
+                height: 14px;
+            }
+        }
+    </style>
+
+    <!-- Spring Festival Background -->
+    <div class="spring-bg" id="springBg"></div>
+
+    <!-- Background Pattern Layer -->
+    <div class="background-pattern" id="backgroundPattern"></div>
+
+    <!-- Effects Canvas -->
+    <canvas id="effectsCanvas"></canvas>
+
+    <!-- Firework Tubes (Spring Festival only) -->
+    <div class="firework-tubes" id="fireworkTubes">
+        <div class="firework-tube" data-tube-index="0">
+            <div class="tube-body">
+                <div class="tube-ring top"></div>
+                <div class="tube-ring middle"></div>
+                <div class="tube-ring bottom"></div>
+            </div>
+            <div class="tube-base"></div>
+        </div>
+        <div class="firework-tube" data-tube-index="1">
+            <div class="tube-body">
+                <div class="tube-ring top"></div>
+                <div class="tube-ring middle"></div>
+                <div class="tube-ring bottom"></div>
+            </div>
+            <div class="tube-base"></div>
+        </div>
+        <div class="firework-tube" data-tube-index="2">
+            <div class="tube-body">
+                <div class="tube-ring top"></div>
+                <div class="tube-ring middle"></div>
+                <div class="tube-ring bottom"></div>
+            </div>
+            <div class="tube-base"></div>
+        </div>
+        <div class="firework-tube" data-tube-index="3">
+            <div class="tube-body">
+                <div class="tube-ring top"></div>
+                <div class="tube-ring middle"></div>
+                <div class="tube-ring bottom"></div>
+            </div>
+            <div class="tube-base"></div>
+        </div>
+        <div class="firework-tube" data-tube-index="4">
+            <div class="tube-body">
+                <div class="tube-ring top"></div>
+                <div class="tube-ring middle"></div>
+                <div class="tube-ring bottom"></div>
+            </div>
+            <div class="tube-base"></div>
+        </div>
+    </div>
+
+
+    <!-- Decorative Background Elements -->
+    <div class="decorations" id="decorations">
+        <!-- Left decoration -->
+        <div class="decoration-item lantern-left" id="decoLeft"></div>
+        <!-- Right decoration -->
+        <div class="decoration-item lantern-right" id="decoRight"></div>
+    </div>
+
+    <!-- Page Title -->
+    <div class="page-title">
+        <div class="title-row">
+            <h1 id="festivalTitle">春节倒计时</h1>
+            <div class="select-icon-wrapper">
+                <select id="festivalSelect" class="festival-select-icon" aria-label="选择节日"></select>
+            </div>
+        </div>
+        <p class="subtitle" id="festivalSubtitle">2026年2月17日 · 农历正月初一 · 星期二</p>
+    </div>
+
+    <!-- Countdown Card -->
+    <div class="countdown-card">
+        <!-- BGM Control Button -->
+        <div class="bgm-control" id="bgmControl">
+            <span class="bgm-icon" id="bgmIcon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                    <line x1="23" y1="9" x2="17" y2="15" class="mute-line"/>
+                    <line x1="17" y1="9" x2="23" y2="15" class="mute-line"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" class="sound-wave"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14" class="sound-wave"/>
+                </svg>
+            </span>
+        </div>
+        <!-- Location/Weather Indicator -->
+        <div class="location-selector" id="locationSelector">
+            <span class="weather-icon" id="weatherIcon">☀️</span>
+            <span class="temperature" id="temperature">--°C</span>
+            <span class="city-name" id="cityName">北京</span>
+        </div>
+        <!-- Countdown Display -->
+        <div class="countdown-display">
+            <div class="countdown-label" id="countdownLabel">距离春节还有</div>
+            <div class="countdown-time">
+                <div class="time-unit flip-card" id="yearsUnit" style="display: none;">
+                    <div class="flip-card-inner">
+                        <span class="time-value" id="years">0</span>
+                    </div>
+                    <span class="time-label">年</span>
+                </div>
+                <span class="flip-separator" id="yearsSeparator" style="display: none;">-</span>
+                <div class="time-unit flip-card" id="monthsUnit" style="display: none;">
+                    <div class="flip-card-inner">
+                        <span class="time-value" id="months">0</span>
+                    </div>
+                    <span class="time-label">月</span>
+                </div>
+                <span class="flip-separator" id="monthsSeparator" style="display: none;">-</span>
+                <div class="time-unit flip-card" id="daysUnit">
+                    <div class="flip-card-inner">
+                        <span class="time-value" id="days">0</span>
+                    </div>
+                    <span class="time-label">天</span>
+                </div>
+                <div class="time-section-gap"></div>
+                <div class="time-unit">
+                    <span class="time-value" id="hours">00</span>
+                    <span class="time-label">时</span>
+                </div>
+                <span class="time-separator">:</span>
+                <div class="time-unit">
+                    <span class="time-value" id="minutes">00</span>
+                    <span class="time-label">分</span>
+                </div>
+                <span class="time-separator">:</span>
+                <div class="time-unit">
+                    <span class="time-value" id="seconds">00</span>
+                    <span class="time-label">秒</span>
+                </div>
+                <span class="time-separator-dot">:</span>
+                <div class="time-unit">
+                    <span class="time-value" id="milliseconds">000</span>
+                    <span class="time-label">毫秒</span>
+                </div>
+            </div>
+
+            <!-- Festival Arrived Message -->
+            <div class="festival-message" id="festivalMessage" style="display: none;">
+                <span id="arrivedMessage">🎉 新年快乐！恭喜发财！🧧</span>
+            </div>
+        </div>
+
+        <!-- Year Progress Bar -->
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text">
+                <span>年度进度: <span class="progress-percent" id="progressPercent">0%</span></span>
+                <span id="progressLabel">已过 0 天</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Query Card -->
+    <div class="query-card" id="queryCard">
+        <ul class="query-list">
+            <li class="query-item" data-query="福字倒贴的习俗始于明代还是清代">
+                <span class="query-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </span>
+                <span class="query-text">福字倒贴的习俗始于明代还是清代？</span>
+            </li>
+            <li class="query-item" data-query="春联上联和下联分别贴哪边">
+                <span class="query-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </span>
+                <span class="query-text">春联上联和下联分别贴哪边？</span>
+            </li>
+            <li class="query-item" data-query="饺子的形状模仿的荷包还是元宝">
+                <span class="query-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </span>
+                <span class="query-text">饺子的形状模仿的荷包还是元宝？</span>
+            </li>
+            <li class="query-item" data-query="春节放的烟花最早唐代还是宋代">
+                <span class="query-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                </span>
+                <span class="query-text">春节放的烟花最早唐代还是宋代？</span>
+            </li>
+        </ul>
+        <div class="query-footer">
+            <a href="https://rewards.bing.com/redeem/" target="_blank" class="rewards-link">抢天猫、中石化等礼品卡，去微软积分商城！</a>
+        </div>
+    </div>
+
+    <!-- Footer Link (temporarily hidden)
+    <div class="footer-link">
+        <a href="index.html">← 返回退休倒计时</a>
+    </div>
+    -->
+
+    <script>
+        // ============ Festival Configuration ============
+        const festivals = {
+            'spring-festival': {
+                name: '春节',
+                type: 'lunar',
+                lunarDate: '正月初一',
+                dates: {
+                    2025: '2025-01-29', 2026: '2026-02-17', 2027: '2027-02-06',
+                    2028: '2028-01-26', 2029: '2029-02-13', 2030: '2030-02-03',
+                    2031: '2031-01-23', 2032: '2032-02-11', 2033: '2033-01-31',
+                    2034: '2034-02-19', 2035: '2035-02-08'
+                },
+                icon: '🏮',
+                colors: {
+                    primary: '#dc2626',
+                    primaryDark: '#b91c1c',
+                    secondary: '#f59e0b',
+                    border: '#fecaca',
+                    progressBg: '#fee2e2'
+                },
+                background: 'linear-gradient(135deg, #fef2f2 0%, #fff7ed 50%, #fef2f2 100%)',
+                pattern: 'lanterns',
+                effect: 'firework',
+                message: '🎉 新年快乐！恭喜发财！🧧'
+            },
+            'lantern-festival': {
+                name: '元宵节',
+                type: 'lunar',
+                lunarDate: '正月十五',
+                dates: {
+                    2025: '2025-02-12', 2026: '2026-03-03', 2027: '2027-02-20',
+                    2028: '2028-02-09', 2029: '2029-02-27', 2030: '2030-02-17',
+                    2031: '2031-02-06', 2032: '2032-02-25', 2033: '2033-02-14',
+                    2034: '2034-03-05', 2035: '2035-02-22'
+                },
+                icon: '🏮',
+                colors: {
+                    primary: '#f59e0b',
+                    primaryDark: '#d97706',
+                    secondary: '#fbbf24',
+                    border: '#fed7aa',
+                    progressBg: '#fef3c7'
+                },
+                background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fffbeb 100%)',
+                pattern: 'lanterns',
+                effect: 'lanterns',
+                message: '🏮 元宵快乐！团团圆圆！🎆'
+            }
+        };
+
+        // Festival order for display
+        const festivalOrder = [
+            'spring-festival', 'lantern-festival'
+        ];
+
+        // ============ Global Variables ============
+        let countdownInterval = null;
+        let targetDate = null;
+        let currentFestival = null;
+        let currentYear = null;
+        let currentEffect = null;
+
+        // ============ Get Festival Date ============
+        function getFestivalDate(festivalKey, year) {
+            const festival = festivals[festivalKey];
+            if (!festival) return null;
+
+            if (festival.type === 'fixed') {
+                return new Date(year, festival.month - 1, festival.day);
+            } else if (festival.dates && festival.dates[year]) {
+                return new Date(festival.dates[year] + 'T00:00:00');
+            }
+            return null;
+        }
+
+        // ============ Find Next Festival ============
+        function findNextFestival() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            let nextFestival = null;
+            let nextDate = null;
+            let nextYear = null;
+
+            // Check current year first
+            for (const key of festivalOrder) {
+                const date = getFestivalDate(key, currentYear);
+                if (date && date > now) {
+                    if (!nextDate || date < nextDate) {
+                        nextDate = date;
+                        nextFestival = key;
+                        nextYear = currentYear;
+                    }
+                }
+            }
+
+            // If no festival found this year, check next year
+            if (!nextFestival) {
+                for (const key of festivalOrder) {
+                    const date = getFestivalDate(key, currentYear + 1);
+                    if (date) {
+                        if (!nextDate || date < nextDate) {
+                            nextDate = date;
+                            nextFestival = key;
+                            nextYear = currentYear + 1;
+                        }
+                    }
+                }
+            }
+
+            return { festival: nextFestival || 'spring-festival', year: nextYear || currentYear + 1 };
+        }
+
+        // ============ Initialize Selectors ============
+        function initSelectors() {
+            const festivalSelect = document.getElementById('festivalSelect');
+
+            // Populate festival selector
+            for (const key of festivalOrder) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = festivals[key].name;
+                festivalSelect.appendChild(option);
+            }
+
+            // Event listener - auto-calculate year when festival changes
+            festivalSelect.addEventListener('change', () => {
+                const festivalKey = festivalSelect.value;
+                const year = getNextFestivalYear(festivalKey);
+                initCountdown(festivalKey, year);
+            });
+        }
+
+        // ============ Get Next Festival Year ============
+        // Calculate the appropriate year for a given festival
+        // If this year's festival has passed, return next year
+        function getNextFestivalYear(festivalKey) {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const festivalDate = getFestivalDate(festivalKey, currentYear);
+
+            // If festival date exists for current year and hasn't passed yet, use current year
+            if (festivalDate && festivalDate > now) {
+                return currentYear;
+            }
+            // Otherwise use next year
+            return currentYear + 1;
+        }
+
+        // ============ Update Page Theme ============
+        function updatePageTheme(festival) {
+            const colors = festival.colors;
+            const root = document.documentElement;
+
+            // Set CSS custom properties
+            root.style.setProperty('--primary-color', colors.primary);
+            root.style.setProperty('--primary-dark', colors.primaryDark);
+            root.style.setProperty('--secondary-color', colors.secondary);
+            root.style.setProperty('--border-color', colors.border);
+            root.style.setProperty('--progress-bg', colors.progressBg);
+
+            // Keep body transparent so sky shows through
+            // The festival background is provided by the spring-bg layer for spring festival
+            // or by the background-pattern layer for other festivals
+            document.body.style.background = 'transparent';
+
+            // Update background pattern
+            const patternEl = document.getElementById('backgroundPattern');
+            if (patternEl && festival.pattern) {
+                patternEl.className = 'background-pattern';
+                patternEl.classList.add(`pattern-${festival.pattern}`);
+                // Set pattern color to match theme
+                patternEl.style.color = colors.primary;
+            }
+
+            // Update card shadow color
+            const card = document.querySelector('.countdown-card');
+            card.style.boxShadow = `0 4px 24px ${colors.primary}1f`;
+
+            // Update selector border color and chevron
+            const festivalSelect = document.getElementById('festivalSelect');
+            if (festivalSelect) {
+                festivalSelect.style.borderColor = colors.primary;
+            }
+            const selectWrapper = document.querySelector('.select-icon-wrapper');
+            if (selectWrapper) {
+                selectWrapper.style.setProperty('--primary-color', colors.primary);
+            }
+
+            // Update flip card inner backgrounds
+            const flipCards = document.querySelectorAll('.flip-card-inner');
+            flipCards.forEach(card => {
+                card.style.background = `linear-gradient(180deg, ${colors.primary} 0%, ${colors.primaryDark} 50%, ${colors.primary} 50%, ${colors.secondary} 100%)`;
+                card.style.boxShadow = `0 4px 12px ${colors.primary}4d`;
+            });
+
+            // Update arrived message
+            document.getElementById('arrivedMessage').textContent = festival.message;
+
+            // Switch effect system
+            if (currentEffect !== festival.effect) {
+                currentEffect = festival.effect;
+                updateEffectColors(colors);
+            }
+
+            // Toggle firework tubes - now always hidden
+            // Fireworks still launch from bottom of screen on click
+            if (typeof window.setTubesActive === 'function') {
+                window.setTubesActive(false); // Always hide tubes
+            }
+
+            // Toggle spring background image (only for spring-festival)
+            const springBg = document.getElementById('springBg');
+            if (springBg) {
+                if (currentFestival === 'spring-festival') {
+                    springBg.classList.add('active');
+                } else {
+                    springBg.classList.remove('active');
+                }
+            }
+        }
+
+        // ============ Initialize Countdown ============
+        function initCountdown(festivalKey, year) {
+            const festival = festivals[festivalKey];
+            if (!festival) return;
+
+            // Get target date
+            let date = getFestivalDate(festivalKey, year);
+
+            // If date not available for this year, show message
+            if (!date) {
+                alert(`${year}年的${festival.name}日期数据暂不可用`);
+                return;
+            }
+
+            targetDate = date;
+            currentFestival = festivalKey;
+            currentYear = year;
+
+            // Update selector value
+            document.getElementById('festivalSelect').value = festivalKey;
+
+            // Update page title
+            document.getElementById('festivalTitle').textContent = festival.name + '倒计时';
+
+            // Build merged subtitle: "2026年2月17日 · 农历正月初一 · 星期二"
+            const monthDay = (targetDate.getMonth() + 1) + '月' + targetDate.getDate() + '日';
+            const weekdayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekday = weekdayNames[targetDate.getDay()];
+            const lunarInfo = festival.lunarDate ? `农历${festival.lunarDate}` : '';
+
+            let subtitleParts = [year + '年' + monthDay];
+            if (lunarInfo) subtitleParts.push(lunarInfo);
+            subtitleParts.push(weekday);
+
+            document.getElementById('festivalSubtitle').textContent = subtitleParts.join(' · ');
+
+            // Update countdown label
+            document.getElementById('countdownLabel').textContent = '距离' + festival.name + '还有';
+
+            // Update page theme
+            updatePageTheme(festival);
+
+            // Clear existing interval
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
+            // Start countdown
+            updateCountdown();
+            countdownInterval = setInterval(updateCountdown, 1);
+
+            // Update year progress
+            updateYearProgress();
+        }
+
+        // ============ Update Countdown Display ============
+        function updateCountdown() {
+            const now = new Date();
+            const diff = targetDate - now;
+
+            const countdownTime = document.querySelector('.countdown-time');
+            const festivalMessage = document.getElementById('festivalMessage');
+            const festival = festivals[currentFestival];
+
+            if (diff <= 0) {
+                // Festival has arrived!
+                countdownTime.style.display = 'none';
+                festivalMessage.style.display = 'block';
+                document.getElementById('countdownLabel').textContent = festival.name + '到了！';
+                return;
+            }
+
+            countdownTime.style.display = 'flex';
+            festivalMessage.style.display = 'none';
+            document.getElementById('countdownLabel').textContent = '距离' + festival.name + '还有';
+
+            // Calculate time units
+            const totalMilliseconds = diff;
+            const totalSeconds = Math.floor(diff / 1000);
+            const totalMinutes = Math.floor(totalSeconds / 60);
+            const totalHours = Math.floor(totalMinutes / 60);
+
+            // Use precise year/month/day calculation
+            let years = targetDate.getFullYear() - now.getFullYear();
+            let months = targetDate.getMonth() - now.getMonth();
+            let days = targetDate.getDate() - now.getDate();
+
+            // Adjust for negative values
+            if (days < 0) {
+                months--;
+                const lastMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                days += lastMonth.getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            // Calculate remaining hours, minutes, seconds, milliseconds
+            const hours = totalHours % 24;
+            const minutes = totalMinutes % 60;
+            const seconds = totalSeconds % 60;
+            const milliseconds = totalMilliseconds % 1000;
+
+            // Dynamic visibility: hide year if 0, hide month if both year and month are 0
+            const yearsUnit = document.getElementById('yearsUnit');
+            const yearsSeparator = document.getElementById('yearsSeparator');
+            const monthsUnit = document.getElementById('monthsUnit');
+            const monthsSeparator = document.getElementById('monthsSeparator');
+
+            if (years > 0) {
+                yearsUnit.style.display = 'flex';
+                yearsSeparator.style.display = 'inline';
+                monthsUnit.style.display = 'flex';
+                monthsSeparator.style.display = 'inline';
+            } else if (months > 0) {
+                yearsUnit.style.display = 'none';
+                yearsSeparator.style.display = 'none';
+                monthsUnit.style.display = 'flex';
+                monthsSeparator.style.display = 'inline';
+            } else {
+                yearsUnit.style.display = 'none';
+                yearsSeparator.style.display = 'none';
+                monthsUnit.style.display = 'none';
+                monthsSeparator.style.display = 'none';
+            }
+
+            // Update display values
+            document.getElementById('years').textContent = years;
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            document.getElementById('milliseconds').textContent = milliseconds.toString().padStart(3, '0');
+        }
+
+        // ============ Update Year Progress ============
+        function updateYearProgress() {
+            const now = new Date();
+            const year = now.getFullYear();
+
+            // Start of year
+            const yearStart = new Date(year, 0, 1);
+            // End of year
+            const yearEnd = new Date(year + 1, 0, 1);
+
+            // Calculate progress
+            const totalYearMs = yearEnd - yearStart;
+            const elapsedMs = now - yearStart;
+            const percent = (elapsedMs / totalYearMs) * 100;
+
+            // Calculate days passed
+            const daysPassed = Math.floor(elapsedMs / (1000 * 60 * 60 * 24));
+            const totalDays = Math.floor(totalYearMs / (1000 * 60 * 60 * 24));
+
+            // Update UI
+            document.getElementById('progressFill').style.width = percent.toFixed(2) + '%';
+            document.getElementById('progressPercent').textContent = percent.toFixed(1) + '%';
+            document.getElementById('progressLabel').textContent = `${year}年已过 ${daysPassed} / ${totalDays} 天`;
+
+            // Update progress every minute
+            setTimeout(updateYearProgress, 60000);
+        }
+
+        // ============ Initialize on DOM Ready ============
+        document.addEventListener('DOMContentLoaded', () => {
+            initSelectors();
+            // Default to Spring Festival (春节)
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const springFestivalDate = getFestivalDate('spring-festival', currentYear);
+            // If this year's Spring Festival has passed, show next year's
+            const year = (springFestivalDate && springFestivalDate > now) ? currentYear : currentYear + 1;
+            initCountdown('spring-festival', year);
+        });
+
+        // ============ BGM Controller ============
+        (function() {
+            const bgm = new Audio('sounds/春暖吉时.mp3');
+            bgm.loop = true;
+            bgm.volume = 0.15;
+            bgm.load();
+
+            const bgmControl = document.getElementById('bgmControl');
+
+            let isPlaying = false;
+
+            function toggleBGM() {
+                if (isPlaying) {
+                    bgm.pause();
+                    bgmControl.classList.remove('playing');
+                } else {
+                    bgm.play().then(() => {
+                        bgmControl.classList.add('playing');
+                    }).catch((e) => {
+                        console.log('BGM autoplay blocked, user interaction needed');
+                    });
+                }
+                isPlaying = !isPlaying;
+            }
+
+            bgmControl.addEventListener('click', toggleBGM);
+
+            // Update night mode for BGM control
+            function updateBGMNightMode() {
+                if (window.SkyTestAPI) {
+                    try {
+                        const isNight = window.SkyTestAPI.isNightMode();
+                        if (isNight) {
+                            bgmControl.classList.add('night-mode');
+                        } else {
+                            bgmControl.classList.remove('night-mode');
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            // Check night mode periodically
+            setInterval(updateBGMNightMode, 1000);
+        })();
+
+        // ============ Query Card Controller ============
+        (function() {
+            const queryCard = document.getElementById('queryCard');
+            const queryItems = document.querySelectorAll('.query-item');
+
+            // Add click handlers for each query item
+            queryItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const query = this.getAttribute('data-query');
+                    if (query) {
+                        const searchQuery = encodeURIComponent(query);
+                        const bingUrl = 'https://www.bing.com/search?q=' + searchQuery;
+                        window.open(bingUrl, '_blank');
+                    }
+                });
+            });
+
+            // Update night mode for query card
+            function updateQueryCardNightMode() {
+                if (window.SkyTestAPI) {
+                    try {
+                        const isNight = window.SkyTestAPI.isNightMode();
+                        if (isNight) {
+                            queryCard.classList.add('night-mode');
+                        } else {
+                            queryCard.classList.remove('night-mode');
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            // Check night mode periodically
+            setInterval(updateQueryCardNightMode, 1000);
+        })();
+
+        // ============ Visual Effects Particle System ============
+        (function() {
+            const canvas = document.getElementById('effectsCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // ============ Firework Sound Effects ============
+            const launchSound = new Audio('sounds/sou.MP3');
+            const explosionSound = new Audio('sounds/peng.MP3');
+
+            // Preload sounds
+            launchSound.load();
+            explosionSound.load();
+
+            // Set volume (0.0 to 1.0)
+            launchSound.volume = 0.8;
+            explosionSound.volume = 0.9;
+
+            function playLaunchSound() {
+                try {
+                    // Clone the audio to allow overlapping sounds
+                    const sound = launchSound.cloneNode();
+                    sound.volume = launchSound.volume;
+                    sound.play().catch(() => {});
+                } catch (e) {
+                    // Audio not supported
+                }
+            }
+
+            function playExplosionSound() {
+                try {
+                    const sound = explosionSound.cloneNode();
+                    sound.volume = explosionSound.volume;
+                    sound.play().catch(() => {});
+                } catch (e) {
+                    // Audio not supported
+                }
+            }
+
+            // Particle array
+            let particles = [];
+            const MAX_PARTICLES = 500;
+
+            // Current effect colors
+            let effectColors = ['#dc2626', '#ef4444', '#b91c1c', '#f59e0b', '#fbbf24', '#f97316', '#ea580c', '#fcd34d'];
+
+            // Mouse tracking for sparkle trail
+            let lastMouseX = 0;
+            let lastMouseY = 0;
+            let mouseDistance = 0;
+            const SPARKLE_DISTANCE = 20;
+
+            // Resize canvas to window size
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            // Update effect colors based on festival
+            window.updateEffectColors = function(colors) {
+                effectColors = [
+                    colors.primary,
+                    colors.primaryDark,
+                    colors.secondary,
+                    lightenColor(colors.primary, 20),
+                    lightenColor(colors.secondary, 20),
+                    darkenColor(colors.primary, 10),
+                    darkenColor(colors.secondary, 10),
+                    lightenColor(colors.primary, 40)
+                ];
+            };
+
+            function lightenColor(hex, percent) {
+                const num = parseInt(hex.slice(1), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = Math.min(255, (num >> 16) + amt);
+                const G = Math.min(255, ((num >> 8) & 0x00FF) + amt);
+                const B = Math.min(255, (num & 0x0000FF) + amt);
+                return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+            }
+
+            function darkenColor(hex, percent) {
+                const num = parseInt(hex.slice(1), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = Math.max(0, (num >> 16) - amt);
+                const G = Math.max(0, ((num >> 8) & 0x00FF) - amt);
+                const B = Math.max(0, (num & 0x0000FF) - amt);
+                return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+            }
+
+            // Particle class
+            class Particle {
+                constructor(x, y, type, isSparkle = false, colorPalette = null) {
+                    this.x = x;
+                    this.y = y;
+                    this.type = type;
+
+                    // Check if night mode
+                    const isNight = window.SkyTestAPI && window.SkyTestAPI.isNightMode();
+
+                    // Different physics based on effect type
+                    if (type === 'firework') {
+                        const angle = Math.random() * Math.PI * 2;
+                        if (isSparkle) {
+                            // Sparkle particles (hover effect) - same for day/night
+                            const speed = Math.random() * 2 + 1;
+                            this.vx = Math.cos(angle) * speed;
+                            this.vy = Math.sin(angle) * speed;
+                            this.gravity = 0.05;
+                            this.friction = 0.99;
+                            this.size = Math.random() * 2 + 1;
+                            this.life = 60;
+                        } else if (isNight) {
+                            // Night mode: fast explosive particles with glow
+                            const speed = Math.random() * 6 + 2;
+                            this.vx = Math.cos(angle) * speed;
+                            this.vy = Math.sin(angle) * speed;
+                            this.gravity = 0.05;
+                            this.friction = 0.99;
+                            this.size = Math.random() * 2 + 2;
+                            this.life = 120;
+                        } else {
+                            // Day mode: slow drifting smoke-like particles
+                            const speed = Math.random() * 1.5 + 0.5; // Much slower spread
+                            this.vx = Math.cos(angle) * speed;
+                            this.vy = Math.sin(angle) * speed;
+                            this.gravity = 0.008; // Very slow fall, almost floating
+                            this.friction = 0.985; // More air resistance
+                            this.size = Math.random() * 4 + 4; // Larger particles
+                            this.life = 180; // Longer life for slow fade
+                        }
+                    } else if (type === 'hearts') {
+                        this.vx = (Math.random() - 0.5) * 2;
+                        this.vy = Math.random() * -2 - 1;
+                        this.gravity = 0.02;
+                        this.friction = 0.99;
+                        this.size = Math.random() * 15 + 10;
+                        this.life = 150;
+                        this.rotation = Math.random() * Math.PI * 2;
+                        this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+                    } else if (type === 'snowflakes') {
+                        this.vx = (Math.random() - 0.5) * 2;
+                        this.vy = Math.random() * 2 + 1;
+                        this.gravity = 0;
+                        this.friction = 1;
+                        this.size = Math.random() * 8 + 4;
+                        this.life = 200;
+                        this.rotation = Math.random() * Math.PI * 2;
+                        this.rotationSpeed = (Math.random() - 0.5) * 0.05;
+                        this.wobble = Math.random() * Math.PI * 2;
+                        this.wobbleSpeed = Math.random() * 0.1 + 0.05;
+                    } else if (type === 'leaves') {
+                        this.vx = (Math.random() - 0.5) * 3;
+                        this.vy = Math.random() * 2 + 1;
+                        this.gravity = 0.01;
+                        this.friction = 0.99;
+                        this.size = Math.random() * 12 + 8;
+                        this.life = 180;
+                        this.rotation = Math.random() * Math.PI * 2;
+                        this.rotationSpeed = (Math.random() - 0.5) * 0.15;
+                        this.wobble = Math.random() * Math.PI * 2;
+                        this.wobbleSpeed = Math.random() * 0.08 + 0.03;
+                    } else if (type === 'stars') {
+                        const angle = Math.random() * Math.PI * 2;
+                        const speed = Math.random() * 3 + 1;
+                        this.vx = Math.cos(angle) * speed;
+                        this.vy = Math.sin(angle) * speed;
+                        this.gravity = 0.01;
+                        this.friction = 0.98;
+                        this.size = Math.random() * 10 + 5;
+                        this.life = 120;
+                        this.twinkle = Math.random() * Math.PI * 2;
+                        this.twinkleSpeed = Math.random() * 0.3 + 0.1;
+                    } else if (type === 'lanterns') {
+                        this.vx = (Math.random() - 0.5) * 1;
+                        this.vy = Math.random() * -2 - 0.5;
+                        this.gravity = -0.01;
+                        this.friction = 0.99;
+                        this.size = Math.random() * 20 + 15;
+                        this.life = 200;
+                        this.wobble = Math.random() * Math.PI * 2;
+                        this.wobbleSpeed = Math.random() * 0.05 + 0.02;
+                    }
+
+                    // Color selection
+                    if (type === 'firework' && !isSparkle && colorPalette) {
+                        // Firework explosion particles use the burst's color palette
+                        this.color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+                    } else {
+                        // Sparkle (hover) and other effects use theme colors
+                        this.color = effectColors[Math.floor(Math.random() * effectColors.length)];
+                    }
+                    this.alpha = 1;
+                    this.maxLife = this.life;
+                    this.isSparkle = isSparkle;
+                }
+
+                update() {
+                    // Apply gravity
+                    this.vy += this.gravity;
+
+                    // Apply friction
+                    this.vx *= this.friction;
+                    this.vy *= this.friction;
+
+                    // Wobble effect for some types
+                    if (this.wobble !== undefined) {
+                        this.wobble += this.wobbleSpeed;
+                        this.vx += Math.sin(this.wobble) * 0.1;
+                    }
+
+                    // Update rotation
+                    if (this.rotation !== undefined) {
+                        this.rotation += this.rotationSpeed;
+                    }
+
+                    // Twinkle effect for stars
+                    if (this.twinkle !== undefined) {
+                        this.twinkle += this.twinkleSpeed;
+                    }
+
+                    // Update position
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Decrease life and alpha
+                    this.life--;
+                    this.alpha = this.life / this.maxLife;
+
+                    return this.life > 0 && this.y < canvas.height + 50;
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha;
+
+                    if (this.type === 'firework') {
+                        // Check if night mode for glow vs smoke effect
+                        const isNight = window.SkyTestAPI && window.SkyTestAPI.isNightMode();
+
+                        if (isNight) {
+                            // Night mode: Glow effect
+                            // Outer glow layer
+                            ctx.save();
+                            ctx.globalAlpha = this.alpha * 0.3;
+                            ctx.fillStyle = this.color;
+                            ctx.shadowColor = this.color;
+                            ctx.shadowBlur = 20;
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+
+                            // Middle glow layer
+                            ctx.save();
+                            ctx.globalAlpha = this.alpha * 0.6;
+                            ctx.fillStyle = this.color;
+                            ctx.shadowColor = this.color;
+                            ctx.shadowBlur = 12;
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+
+                            // Core with glow
+                            ctx.save();
+                            ctx.globalAlpha = this.alpha;
+                            ctx.fillStyle = this.color;
+                            ctx.shadowColor = this.color;
+                            ctx.shadowBlur = 8;
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                            ctx.fill();
+
+                            // Bright white center
+                            ctx.fillStyle = '#ffffff';
+                            ctx.globalAlpha = this.alpha * 0.8;
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.size * 0.4, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+                        } else {
+                            // Day mode: Smoke/particle effect (no glow)
+                            // Outer smoke layer - soft, diffuse
+                            ctx.save();
+                            ctx.globalAlpha = this.alpha * 0.25;
+                            ctx.fillStyle = this.color;
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.size * 4, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+
+                            // Middle smoke layer
+                            ctx.save();
+                            ctx.globalAlpha = this.alpha * 0.5;
+                            ctx.fillStyle = this.color;
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+
+                            // Core particle - solid color
+                            ctx.save();
+                            ctx.globalAlpha = this.alpha * 0.8;
+                            ctx.fillStyle = this.color;
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.size * 1.2, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+
+                            // Slightly lighter center for depth
+                            ctx.save();
+                            ctx.globalAlpha = this.alpha * 0.6;
+                            ctx.fillStyle = '#ffffff';
+                            ctx.beginPath();
+                            ctx.arc(this.x, this.y, this.size * 0.5, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+                        }
+                    } else if (this.type === 'hearts') {
+                        this.drawHeart();
+                    } else if (this.type === 'snowflakes') {
+                        this.drawSnowflake();
+                    } else if (this.type === 'leaves') {
+                        this.drawLeaf();
+                    } else if (this.type === 'stars') {
+                        this.drawStar();
+                    } else if (this.type === 'lanterns') {
+                        this.drawLantern();
+                    }
+
+                    ctx.restore();
+                }
+
+                drawHeart() {
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    const s = this.size / 15;
+                    ctx.moveTo(0, -s * 3);
+                    ctx.bezierCurveTo(s * 6, -s * 10, s * 12, -s * 2, 0, s * 8);
+                    ctx.bezierCurveTo(-s * 12, -s * 2, -s * 6, -s * 10, 0, -s * 3);
+                    ctx.fill();
+                }
+
+                drawSnowflake() {
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 2;
+                    const s = this.size / 2;
+                    for (let i = 0; i < 6; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(0, -s);
+                        ctx.moveTo(0, -s * 0.6);
+                        ctx.lineTo(s * 0.3, -s * 0.8);
+                        ctx.moveTo(0, -s * 0.6);
+                        ctx.lineTo(-s * 0.3, -s * 0.8);
+                        ctx.stroke();
+                        ctx.rotate(Math.PI / 3);
+                    }
+                }
+
+                drawLeaf() {
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    const s = this.size / 2;
+                    ctx.ellipse(0, 0, s * 0.4, s, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Leaf vein
+                    ctx.strokeStyle = darkenColor(this.color, 20);
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -s);
+                    ctx.lineTo(0, s);
+                    ctx.stroke();
+                }
+
+                drawStar() {
+                    const twinkleAlpha = 0.5 + 0.5 * Math.sin(this.twinkle);
+                    ctx.globalAlpha = this.alpha * twinkleAlpha;
+                    ctx.translate(this.x, this.y);
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    const s = this.size / 2;
+                    for (let i = 0; i < 5; i++) {
+                        const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                        const x = Math.cos(angle) * s;
+                        const y = Math.sin(angle) * s;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    // Inner glow
+                    ctx.fillStyle = lightenColor(this.color, 30);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, s * 0.3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                drawLantern() {
+                    const wobbleX = Math.sin(this.wobble) * 3;
+                    ctx.translate(this.x + wobbleX, this.y);
+                    const s = this.size / 20;
+
+                    // Top hook
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.fillRect(-s * 2, -s * 12, s * 4, s * 2);
+
+                    // Body
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, s * 6, s * 8, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Inner glow
+                    ctx.fillStyle = lightenColor(this.color, 30);
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, s * 4, s * 6, 0, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Bottom tassel
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.fillRect(-s * 1.5, s * 8, s * 3, s * 3);
+                    ctx.strokeStyle = '#f59e0b';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(-s, s * 11);
+                    ctx.lineTo(-s, s * 14);
+                    ctx.moveTo(s, s * 11);
+                    ctx.lineTo(s, s * 14);
+                    ctx.stroke();
+                }
+            }
+
+            // ============ Projectile Class (Firework Launch) ============
+            let projectiles = [];
+
+            class Projectile {
+                constructor(startX, startY, targetX, targetY, tubeElement) {
+                    this.x = startX;
+                    this.y = startY;
+                    this.startX = startX;
+                    this.startY = startY;
+                    this.targetX = targetX;
+                    this.targetY = targetY;
+                    this.tubeElement = tubeElement;
+
+                    // Calculate distance and flight time
+                    const dx = targetX - startX;
+                    const dy = targetY - startY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    // Flight time based on distance (2.0 - 3.5 seconds, slow graceful flight)
+                    this.flightTime = Math.min(3.5, Math.max(2.0, distance / 300));
+                    this.elapsed = 0;
+
+                    // Velocity components
+                    this.vx = dx / (this.flightTime * 60); // Assuming 60fps
+                    this.vy = dy / (this.flightTime * 60);
+
+                    // Trail particles
+                    this.trailParticles = [];
+                    this.trailColors = ['#fbbf24', '#f59e0b', '#fcd34d', '#f97316'];
+
+                    // Projectile size - starts larger, shrinks to invisible
+                    this.startSize = 1.5;  // Initial size
+                    this.size = this.startSize;
+                    this.color = '#ffffff';
+                    this.glowColor = 'rgba(255, 220, 150, 0.4)';
+
+                    // Trigger tube launch animation
+                    if (tubeElement) {
+                        tubeElement.classList.add('launching');
+                        setTimeout(() => tubeElement.classList.remove('launching'), 200);
+                    }
+                }
+
+                update() {
+                    this.elapsed += 1 / 60;
+
+                    // Progress along path (0 to 1)
+                    const progress = Math.min(1, this.elapsed / this.flightTime);
+
+                    // Ease out for more natural motion
+                    const easeProgress = 1 - Math.pow(1 - progress, 2);
+
+                    // Update position
+                    this.x = this.startX + (this.targetX - this.startX) * easeProgress;
+                    this.y = this.startY + (this.targetY - this.startY) * easeProgress;
+
+                    // Add slight upward arc for more realistic trajectory
+                    const arcHeight = Math.abs(this.targetY - this.startY) * 0.1;
+                    const arcOffset = Math.sin(progress * Math.PI) * arcHeight;
+                    this.y -= arcOffset;
+
+                    // Shrink size as it approaches target (from startSize to 0)
+                    this.size = this.startSize * (1 - progress);
+
+                    // Create trail particles (smaller as projectile shrinks)
+                    if (Math.random() < 0.8 && this.size > 0.3) {
+                        const trailSize = Math.max(0.5, (Math.random() * 2 + 0.5) * (this.size / this.startSize));
+                        this.trailParticles.push({
+                            x: this.x + (Math.random() - 0.5) * 4,
+                            y: this.y + (Math.random() - 0.5) * 4,
+                            size: trailSize,
+                            alpha: 1,
+                            color: this.trailColors[Math.floor(Math.random() * this.trailColors.length)],
+                            vx: (Math.random() - 0.5) * 1,
+                            vy: Math.random() * 2 + 0.5 // Slight downward drift
+                        });
+                    }
+
+                    // Update trail particles
+                    this.trailParticles = this.trailParticles.filter(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.alpha -= 0.05;
+                        p.size *= 0.95;
+                        return p.alpha > 0;
+                    });
+
+                    // Check if reached target
+                    return progress < 1;
+                }
+
+                draw() {
+                    // Check if night mode for glow vs smoke effect
+                    const isNight = window.SkyTestAPI && window.SkyTestAPI.isNightMode();
+
+                    // Draw trail particles first (behind projectile)
+                    this.trailParticles.forEach(p => {
+                        ctx.save();
+                        ctx.globalAlpha = p.alpha * 0.5;
+                        ctx.fillStyle = p.color;
+                        if (isNight) {
+                            ctx.shadowColor = p.color;
+                            ctx.shadowBlur = 8;
+                        }
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    });
+
+                    if (isNight) {
+                        // Night mode: Glow effect
+                        // Layer 1: Large soft outer glow
+                        ctx.save();
+                        ctx.globalAlpha = 0.15;
+                        ctx.fillStyle = '#ffcc66';
+                        ctx.shadowColor = '#ffaa00';
+                        ctx.shadowBlur = 40;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size * 12, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+
+                        // Layer 2: Medium glow
+                        ctx.save();
+                        ctx.globalAlpha = 0.3;
+                        ctx.fillStyle = '#ffdd88';
+                        ctx.shadowColor = '#ffcc44';
+                        ctx.shadowBlur = 25;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size * 6, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+
+                        // Layer 3: Inner glow
+                        ctx.save();
+                        ctx.globalAlpha = 0.6;
+                        ctx.fillStyle = '#ffeebb';
+                        ctx.shadowColor = '#ffee88';
+                        ctx.shadowBlur = 15;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+
+                        // Draw projectile core - bright white center
+                        ctx.save();
+                        ctx.fillStyle = '#ffffff';
+                        ctx.shadowColor = '#ffffff';
+                        ctx.shadowBlur = 10;
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    } else {
+                        // Day mode: Smoke/particle effect (no glow)
+                        // Outer smoke layer
+                        ctx.save();
+                        ctx.globalAlpha = 0.3;
+                        ctx.fillStyle = '#8b4513'; // Brown smoke color
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size * 8, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+
+                        // Middle smoke layer
+                        ctx.save();
+                        ctx.globalAlpha = 0.5;
+                        ctx.fillStyle = '#a0522d';
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size * 4, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+
+                        // Core - orange/red spark
+                        ctx.save();
+                        ctx.globalAlpha = 1;
+                        ctx.fillStyle = '#ff6600';
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size * 1.5, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+
+                        // Bright center
+                        ctx.save();
+                        ctx.globalAlpha = 1;
+                        ctx.fillStyle = '#ffcc00';
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                }
+
+                getTargetPosition() {
+                    return { x: this.targetX, y: this.targetY };
+                }
+            }
+
+            // ============ Tube Management ============
+            let tubesActive = false;
+
+            function getTubePositions() {
+                const tubes = document.querySelectorAll('.firework-tube');
+                const positions = [];
+                tubes.forEach((tube, index) => {
+                    const rect = tube.getBoundingClientRect();
+                    const tubeBody = tube.querySelector('.tube-body');
+                    const bodyRect = tubeBody ? tubeBody.getBoundingClientRect() : rect;
+                    positions.push({
+                        element: tube,
+                        x: rect.left + rect.width / 2,
+                        y: bodyRect.top // Top of the tube body
+                    });
+                });
+                return positions;
+            }
+
+            function findNearestTube(targetX) {
+                const positions = getTubePositions();
+                if (positions.length === 0) return null;
+
+                let nearest = positions[0];
+                let minDistance = Math.abs(targetX - positions[0].x);
+
+                for (let i = 1; i < positions.length; i++) {
+                    const distance = Math.abs(targetX - positions[i].x);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        nearest = positions[i];
+                    }
+                }
+
+                return nearest;
+            }
+
+            function launchProjectile(targetX, targetY) {
+                // Launch from random position at bottom of screen
+                const startX = Math.random() * canvas.width * 0.6 + canvas.width * 0.2; // 20%-80% of screen width
+                const startY = canvas.height + 10; // Just below the screen
+
+                const projectile = new Projectile(
+                    startX,
+                    startY,
+                    targetX,
+                    targetY,
+                    null // No tube element
+                );
+
+                projectiles.push(projectile);
+
+                // Play launch sound
+                playLaunchSound();
+
+                return true;
+            }
+
+            // ============ Lantern Projectile Class ============
+            let lanternProjectiles = [];
+
+            class LanternProjectile {
+                constructor(startX, startY, targetX, targetY) {
+                    this.x = startX;
+                    this.y = startY;
+                    this.startX = startX;
+                    this.startY = startY;
+                    this.targetX = targetX;
+                    this.targetY = targetY;
+
+                    // Calculate distance and flight time (very slow floating rise)
+                    const dx = targetX - startX;
+                    const dy = targetY - startY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    // Very slow rise time: 5-8 seconds
+                    this.flightTime = Math.min(8.0, Math.max(5.0, distance / 100));
+                    this.elapsed = 0;
+
+                    // Lantern size - stays constant during flight
+                    this.size = 50;
+
+                    // Lantern colors - yellow/gold theme
+                    this.bodyColor = '#fbbf24';
+                    this.glowColor = '#fef3c7';
+                    this.frameColor = '#b45309';
+
+                    // Wobble effect for floating feel
+                    this.wobble = Math.random() * Math.PI * 2;
+                    this.wobbleSpeed = 0.02;
+
+                    // Fade state
+                    this.alpha = 1;
+                    this.isFading = false;
+                    this.fadeStartTime = 0;
+                    this.fadeDuration = 1.5; // 1.5 seconds to fade out
+                }
+
+                update() {
+                    this.elapsed += 1 / 60;
+                    this.wobble += this.wobbleSpeed;
+
+                    // Progress along path (0 to 1)
+                    const progress = Math.min(1, this.elapsed / this.flightTime);
+
+                    // Ease out for gentle, slow arrival
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+                    // Update position with gentle horizontal wobble
+                    const wobbleX = Math.sin(this.wobble) * 15;
+                    const wobbleY = Math.cos(this.wobble * 0.7) * 5;
+                    this.x = this.startX + (this.targetX - this.startX) * easeProgress + wobbleX;
+                    this.y = this.startY + (this.targetY - this.startY) * easeProgress + wobbleY;
+
+                    // Start fading when reached target
+                    if (progress >= 1 && !this.isFading) {
+                        this.isFading = true;
+                        this.fadeStartTime = this.elapsed;
+                    }
+
+                    // Handle fade out
+                    if (this.isFading) {
+                        const fadeElapsed = this.elapsed - this.fadeStartTime;
+                        this.alpha = Math.max(0, 1 - (fadeElapsed / this.fadeDuration));
+                        if (this.alpha <= 0) {
+                            return false; // Remove when fully faded
+                        }
+                    }
+
+                    return true;
+                }
+
+                draw() {
+                    if (this.alpha <= 0) return;
+
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.globalAlpha = this.alpha;
+
+                    const s = this.size / 20;
+
+                    // Outer glow effect
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha * 0.3;
+                    ctx.fillStyle = '#fff7ed';
+                    ctx.shadowColor = '#fbbf24';
+                    ctx.shadowBlur = 40;
+                    ctx.beginPath();
+                    ctx.roundRect(-s * 8, -s * 10, s * 16, s * 20, s * 2);
+                    ctx.fill();
+                    ctx.restore();
+
+                    // Middle glow
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha * 0.5;
+                    ctx.fillStyle = '#fef3c7';
+                    ctx.shadowColor = '#f59e0b';
+                    ctx.shadowBlur = 25;
+                    ctx.beginPath();
+                    ctx.roundRect(-s * 6, -s * 8, s * 12, s * 16, s * 1.5);
+                    ctx.fill();
+                    ctx.restore();
+
+                    // Top string
+                    ctx.strokeStyle = this.frameColor;
+                    ctx.lineWidth = 1.5;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -s * 8);
+                    ctx.lineTo(0, -s * 12);
+                    ctx.stroke();
+
+                    // Top frame bar
+                    ctx.fillStyle = this.frameColor;
+                    ctx.fillRect(-s * 5, -s * 8, s * 10, s * 1.5);
+
+                    // Lantern body (rounded rectangle) with glow
+                    ctx.save();
+                    ctx.fillStyle = this.bodyColor;
+                    ctx.shadowColor = '#fbbf24';
+                    ctx.shadowBlur = 15;
+                    ctx.beginPath();
+                    ctx.roundRect(-s * 5, -s * 6.5, s * 10, s * 14, s);
+                    ctx.fill();
+                    ctx.restore();
+
+                    // Inner bright glow
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha * 0.7;
+                    ctx.fillStyle = this.glowColor;
+                    ctx.beginPath();
+                    ctx.roundRect(-s * 3.5, -s * 5, s * 7, s * 11, s * 0.5);
+                    ctx.fill();
+                    ctx.restore();
+
+                    // Horizontal frame lines
+                    ctx.strokeStyle = this.frameColor;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(-s * 5, -s * 2);
+                    ctx.lineTo(s * 5, -s * 2);
+                    ctx.moveTo(-s * 5, s * 3);
+                    ctx.lineTo(s * 5, s * 3);
+                    ctx.stroke();
+
+                    // Vertical frame line
+                    ctx.beginPath();
+                    ctx.moveTo(0, -s * 6.5);
+                    ctx.lineTo(0, s * 7.5);
+                    ctx.stroke();
+
+                    // Bottom frame bar
+                    ctx.fillStyle = this.frameColor;
+                    ctx.fillRect(-s * 5, s * 7.5, s * 10, s * 1.5);
+
+                    // Bottom tassel holder
+                    ctx.fillRect(-s * 1.5, s * 9, s * 3, s * 2);
+
+                    // Tassels
+                    ctx.strokeStyle = '#dc2626';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(-s * 0.8, s * 11);
+                    ctx.lineTo(-s * 1.2, s * 15);
+                    ctx.moveTo(0, s * 11);
+                    ctx.lineTo(0, s * 16);
+                    ctx.moveTo(s * 0.8, s * 11);
+                    ctx.lineTo(s * 1.2, s * 15);
+                    ctx.stroke();
+
+                    ctx.restore();
+                }
+            }
+
+            function launchLantern(targetX, targetY) {
+                // Launch from random position at bottom of screen
+                const startX = Math.random() * canvas.width * 0.6 + canvas.width * 0.2;
+                const startY = canvas.height + 80;
+
+                const lantern = new LanternProjectile(startX, startY, targetX, targetY);
+                lanternProjectiles.push(lantern);
+                return true;
+            }
+
+            // Toggle tube visibility (called from updatePageTheme)
+            window.setTubesActive = function(active) {
+                tubesActive = active;
+                const tubesContainer = document.getElementById('fireworkTubes');
+                if (tubesContainer) {
+                    if (active) {
+                        tubesContainer.classList.add('active');
+                    } else {
+                        tubesContainer.classList.remove('active');
+                    }
+                }
+            };
+
+            // Firework color palettes - each burst uses one palette
+            const fireworkPalettes = [
+                ['#ff1744', '#ff5252', '#ff8a80', '#ffcdd2'],           // Red
+                ['#ff4081', '#ff80ab', '#f48fb1', '#fce4ec'],           // Pink
+                ['#e040fb', '#ea80fc', '#ce93d8', '#f3e5f5'],           // Purple
+                ['#7c4dff', '#b388ff', '#9575cd', '#d1c4e9'],           // Deep Purple
+                ['#536dfe', '#8c9eff', '#7986cb', '#c5cae9'],           // Indigo
+                ['#448aff', '#82b1ff', '#64b5f6', '#bbdefb'],           // Blue
+                ['#40c4ff', '#80d8ff', '#4fc3f7', '#b3e5fc'],           // Light Blue
+                ['#18ffff', '#84ffff', '#4dd0e1', '#b2ebf2'],           // Cyan
+                ['#64ffda', '#a7ffeb', '#4db6ac', '#b2dfdb'],           // Teal
+                ['#69f0ae', '#b9f6ca', '#81c784', '#c8e6c9'],           // Green
+                ['#b2ff59', '#ccff90', '#aed581', '#dcedc8'],           // Light Green
+                ['#eeff41', '#f4ff81', '#dce775', '#f0f4c3'],           // Lime
+                ['#ffff00', '#ffff8d', '#fff176', '#fff9c4'],           // Yellow
+                ['#ffd740', '#ffe57f', '#ffd54f', '#ffecb3'],           // Amber
+                ['#ffab40', '#ffd180', '#ffb74d', '#ffe0b2'],           // Orange
+                ['#ff6e40', '#ff9e80', '#ff8a65', '#ffccbc'],           // Deep Orange
+                ['#ff1744', '#ffd740', '#ffab40', '#ff6e40'],           // Red-Yellow-Orange
+                ['#7c4dff', '#e040fb', '#ff4081', '#ff80ab'],           // Purple-Pink
+                ['#448aff', '#18ffff', '#64ffda', '#69f0ae'],           // Blue-Cyan-Teal
+                ['#ffffff', '#e0e0e0', '#bdbdbd', '#9e9e9e'],           // White-Silver
+                ['#ffd700', '#ffec8b', '#fff8dc', '#fffacd'],           // Gold
+            ];
+
+            // Create effect at position
+            function createEffect(x, y, type, colorPalette = null) {
+                // Check if night mode
+                const isNight = window.SkyTestAPI && window.SkyTestAPI.isNightMode();
+
+                let particleCount;
+                switch (type) {
+                    case 'firework':
+                        // Day mode: fewer but larger particles, Night mode: more particles
+                        particleCount = isNight ? (Math.floor(Math.random() * 21) + 30) : (Math.floor(Math.random() * 8) + 12);
+                        break;
+                    case 'hearts':
+                        particleCount = Math.floor(Math.random() * 5) + 5;
+                        break;
+                    case 'snowflakes':
+                        particleCount = Math.floor(Math.random() * 8) + 5;
+                        break;
+                    case 'leaves':
+                        particleCount = Math.floor(Math.random() * 6) + 4;
+                        break;
+                    case 'stars':
+                        particleCount = Math.floor(Math.random() * 10) + 8;
+                        break;
+                    case 'lanterns':
+                        particleCount = Math.floor(Math.random() * 3) + 2;
+                        break;
+                    default:
+                        particleCount = 20;
+                }
+
+                // For fireworks, select a random color palette for this burst
+                let burstPalette = colorPalette;
+                if (type === 'firework' && !burstPalette) {
+                    burstPalette = fireworkPalettes[Math.floor(Math.random() * fireworkPalettes.length)];
+                }
+
+                for (let i = 0; i < particleCount; i++) {
+                    if (particles.length < MAX_PARTICLES) {
+                        particles.push(new Particle(x, y, type, false, burstPalette));
+                    }
+                }
+            }
+
+            // Create small sparkle trail
+            function createSparkle(x, y, type) {
+                // Lanterns: fewer sparkles (only 1)
+                const particleCount = (type === 'lanterns') ? 1 : (Math.floor(Math.random() * 3) + 2);
+                for (let i = 0; i < particleCount; i++) {
+                    if (particles.length < MAX_PARTICLES) {
+                        particles.push(new Particle(x, y, type, true));
+                    }
+                }
+            }
+
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Update and draw projectiles (fireworks)
+                projectiles = projectiles.filter(projectile => {
+                    const alive = projectile.update();
+                    projectile.draw();
+
+                    // If projectile reached target, create explosion effect
+                    if (!alive) {
+                        const target = projectile.getTargetPosition();
+                        createEffect(target.x, target.y, 'firework');
+
+                        // Play explosion sound
+                        playExplosionSound();
+                    }
+
+                    return alive;
+                });
+
+                // Update and draw lantern projectiles
+                lanternProjectiles = lanternProjectiles.filter(lantern => {
+                    const alive = lantern.update();
+                    lantern.draw();
+                    return alive;
+                });
+
+                // Update and draw particles
+                particles = particles.filter(particle => {
+                    const alive = particle.update();
+                    if (alive) {
+                        particle.draw();
+                    }
+                    return alive;
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            // Event handlers
+            function handleClick(e) {
+                // For firework effect, launch from bottom of screen
+                if (currentEffect === 'firework') {
+                    launchProjectile(e.clientX, e.clientY);
+                } else if (currentEffect === 'lanterns') {
+                    // For lantern festival, launch lantern from bottom
+                    launchLantern(e.clientX, e.clientY);
+                } else {
+                    // For other festivals, create effect directly at click position
+                    createEffect(e.clientX, e.clientY, currentEffect || 'firework');
+                }
+            }
+
+            function handleMouseMove(e) {
+                const dx = e.clientX - lastMouseX;
+                const dy = e.clientY - lastMouseY;
+                mouseDistance += Math.sqrt(dx * dx + dy * dy);
+
+                if (mouseDistance >= SPARKLE_DISTANCE) {
+                    createSparkle(e.clientX, e.clientY, currentEffect || 'firework');
+                    mouseDistance = 0;
+                }
+
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+            }
+
+            // Initialize
+            function init() {
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                document.body.addEventListener('click', handleClick);
+                document.body.addEventListener('mousemove', handleMouseMove);
+                animate();
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+            // Helper functions for colors (used in particle drawing)
+            function lightenColor(hex, percent) {
+                const num = parseInt(hex.slice(1), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = Math.min(255, (num >> 16) + amt);
+                const G = Math.min(255, ((num >> 8) & 0x00FF) + amt);
+                const B = Math.min(255, (num & 0x0000FF) + amt);
+                return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+            }
+
+            function darkenColor(hex, percent) {
+                const num = parseInt(hex.slice(1), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = Math.max(0, (num >> 16) - amt);
+                const G = Math.max(0, ((num >> 8) & 0x00FF) - amt);
+                const B = Math.max(0, (num & 0x0000FF) - amt);
+                return '#' + (0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1);
+            }
+        })();
+
+        // ============ Sky Manager System ============
+        (function() {
+            'use strict';
+
+            // ============ City Coordinates Database ============
+            const CITIES = {
+                beijing:   { name: '北京', lat: 39.9042, lon: 116.4074, tz: 8 },
+                shanghai:  { name: '上海', lat: 31.2304, lon: 121.4737, tz: 8 },
+                guangzhou: { name: '广州', lat: 23.1291, lon: 113.2644, tz: 8 },
+                shenzhen:  { name: '深圳', lat: 22.5431, lon: 114.0579, tz: 8 },
+                chengdu:   { name: '成都', lat: 30.5728, lon: 104.0668, tz: 8 },
+                hangzhou:  { name: '杭州', lat: 30.2741, lon: 120.1551, tz: 8 },
+                wuhan:     { name: '武汉', lat: 30.5928, lon: 114.3055, tz: 8 },
+                xian:      { name: '西安', lat: 34.3416, lon: 108.9398, tz: 8 }
+            };
+
+            const DEFAULT_CITY = 'beijing';
+
+            // ============ State ============
+            let currentLocation = { ...CITIES[DEFAULT_CITY], key: DEFAULT_CITY };
+            let currentWeather = null;
+            let isNightMode = false;
+            let stars = [];
+            let starsInitialized = false;
+
+            // DOM Elements
+            const skyGradient = document.getElementById('skyGradient');
+            const skyCanvas = document.getElementById('skyCanvas');
+            const skyCtx = skyCanvas ? skyCanvas.getContext('2d') : null;
+            const weatherOverlay = document.getElementById('weatherOverlay');
+            const locationSelector = document.getElementById('locationSelector');
+            const cityNameEl = document.getElementById('cityName');
+            const weatherIcon = document.getElementById('weatherIcon');
+            const temperature = document.getElementById('temperature');
+
+            // PNG Weather Elements
+            const weatherSunEl = document.getElementById('weatherSun');
+            const weatherMoonEl = document.getElementById('weatherMoon');
+            const cloudsContainer = document.getElementById('cloudsContainer');
+            const rainContainer = document.getElementById('rainContainer');
+            const snowContainer = document.getElementById('snowContainer');
+
+            // ============ Earth-Tone Color System ============
+            // Simplified to 2 time periods: day and night
+            const EARTH_GRADIENTS = {
+                day: [
+                    { pos: 0, color: '#f5e6d3' },
+                    { pos: 0.4, color: '#f8ede0' },
+                    { pos: 0.7, color: '#faf0e6' },
+                    { pos: 1, color: '#faf4eb' }
+                ],
+                night: [
+                    { pos: 0, color: '#1a0f08' },
+                    { pos: 0.4, color: '#251610' },
+                    { pos: 0.7, color: '#2d1b12' },
+                    { pos: 1, color: '#352015' }
+                ]
+            };
+
+            // Text colors for different brightness levels
+            const TEXT_COLORS = {
+                light: '#3d2817', // Dark brown for light backgrounds
+                dark: '#f5e6d3'   // Cream/beige for dark backgrounds
+            };
+
+            // ============ Location Module ============
+            const LocationModule = {
+                init() {
+                    // Add click handler to open Bing weather search
+                    if (locationSelector) {
+                        locationSelector.addEventListener('click', this.openBingWeather.bind(this));
+                    }
+                    // Update city name display
+                    this.updateCityName();
+                },
+
+                openBingWeather() {
+                    const cityName = currentLocation.name || '北京';
+                    const searchQuery = encodeURIComponent(cityName + '天气');
+                    const bingUrl = 'https://www.bing.com/search?q=' + searchQuery;
+                    window.open(bingUrl, '_blank');
+                },
+
+                updateCityName() {
+                    if (cityNameEl) {
+                        cityNameEl.textContent = currentLocation.name || '北京';
+                    }
+                },
+
+                useDefault() {
+                    currentLocation = { ...CITIES[DEFAULT_CITY], key: DEFAULT_CITY };
+                    this.updateCityName();
+                    this.onLocationUpdate();
+                },
+
+                onLocationUpdate() {
+                    this.updateCityName();
+                    WeatherModule.fetchWeather();
+                    SkyRenderer.update();
+                }
+            };
+
+            // ============ Sun Calculator ============
+            const SunCalculator = {
+                getTimes(date, lat, lon) {
+                    const dayOfYear = this.getDayOfYear(date);
+                    const gamma = (2 * Math.PI / 365) * (dayOfYear - 1 + (12 - 12) / 24);
+                    const eqTime = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma) - 0.032077 * Math.sin(gamma)
+                        - 0.014615 * Math.cos(2 * gamma) - 0.040849 * Math.sin(2 * gamma));
+                    const decl = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma)
+                        - 0.006758 * Math.cos(2 * gamma) + 0.000907 * Math.sin(2 * gamma)
+                        - 0.002697 * Math.cos(3 * gamma) + 0.00148 * Math.sin(3 * gamma);
+
+                    const latRad = lat * Math.PI / 180;
+                    const zenith = 90.833 * Math.PI / 180;
+
+                    let ha = Math.acos(
+                        Math.cos(zenith) / (Math.cos(latRad) * Math.cos(decl)) - Math.tan(latRad) * Math.tan(decl)
+                    );
+                    ha = ha * 180 / Math.PI;
+
+                    const sunriseUTC = 720 - 4 * (lon + ha) - eqTime;
+                    const sunsetUTC = 720 - 4 * (lon - ha) - eqTime;
+
+                    const tz = currentLocation.tz || 8;
+                    const sunriseLocal = sunriseUTC + tz * 60;
+                    const sunsetLocal = sunsetUTC + tz * 60;
+
+                    return {
+                        sunrise: this.minutesToTime(sunriseLocal),
+                        sunset: this.minutesToTime(sunsetLocal),
+                        sunriseMinutes: sunriseLocal,
+                        sunsetMinutes: sunsetLocal
+                    };
+                },
+
+                getDayOfYear(date) {
+                    const start = new Date(date.getFullYear(), 0, 0);
+                    const diff = date - start;
+                    return Math.floor(diff / (1000 * 60 * 60 * 24));
+                },
+
+                minutesToTime(minutes) {
+                    let m = minutes % 1440;
+                    if (m < 0) m += 1440;
+                    return { hours: Math.floor(m / 60), minutes: Math.floor(m % 60) };
+                },
+
+                getSunPosition(date, sunTimes) {
+                    const currentMinutes = date.getHours() * 60 + date.getMinutes();
+                    const { sunriseMinutes, sunsetMinutes } = sunTimes;
+
+                    if (currentMinutes < sunriseMinutes - 60) return -1;
+                    else if (currentMinutes < sunriseMinutes) {
+                        return (currentMinutes - (sunriseMinutes - 60)) / 60 * 0.1 - 0.1;
+                    } else if (currentMinutes < sunsetMinutes) {
+                        return (currentMinutes - sunriseMinutes) / (sunsetMinutes - sunriseMinutes);
+                    } else if (currentMinutes < sunsetMinutes + 60) {
+                        return 1 + (currentMinutes - sunsetMinutes) / 60 * 0.1;
+                    }
+                    return 2;
+                }
+            };
+
+            // ============ Sky Renderer ============
+            const SkyRenderer = {
+                getCurrentPhase(date) {
+                    // Use sunrise/sunset times to determine day/night
+                    const sunTimes = SunCalculator.getTimes(date, currentLocation.lat, currentLocation.lon);
+                    const currentMinutes = date.getHours() * 60 + date.getMinutes();
+                    const { sunriseMinutes, sunsetMinutes } = sunTimes;
+
+                    if (currentMinutes >= sunriseMinutes && currentMinutes < sunsetMinutes) {
+                        // Daytime: calculate progress through the day
+                        const progress = (currentMinutes - sunriseMinutes) / (sunsetMinutes - sunriseMinutes);
+                        return { phase: 'day', progress: progress };
+                    } else {
+                        // Nighttime
+                        return { phase: 'night', progress: 1 };
+                    }
+                },
+
+                buildGradient(stops) {
+                    const parts = stops.map(s => `${s.color} ${s.pos * 100}%`);
+                    return `linear-gradient(180deg, ${parts.join(', ')})`;
+                },
+
+                blendGradients(gradient1, gradient2, blend) {
+                    const result = [];
+                    const len = Math.max(gradient1.length, gradient2.length);
+                    for (let i = 0; i < len; i++) {
+                        const s1 = gradient1[Math.min(i, gradient1.length - 1)];
+                        const s2 = gradient2[Math.min(i, gradient2.length - 1)];
+                        result.push({ pos: (s1.pos + s2.pos) / 2, color: this.lerpColor(s1.color, s2.color, blend) });
+                    }
+                    return result;
+                },
+
+                lerpColor(color1, color2, t) {
+                    const c1 = this.hexToRgb(color1);
+                    const c2 = this.hexToRgb(color2);
+                    const r = Math.round(c1.r + (c2.r - c1.r) * t);
+                    const g = Math.round(c1.g + (c2.g - c1.g) * t);
+                    const b = Math.round(c1.b + (c2.b - c1.b) * t);
+                    return `rgb(${r}, ${g}, ${b})`;
+                },
+
+                hexToRgb(hex) {
+                    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? {
+                        r: parseInt(result[1], 16),
+                        g: parseInt(result[2], 16),
+                        b: parseInt(result[3], 16)
+                    } : { r: 0, g: 0, b: 0 };
+                },
+
+                isLightBackground(phase) {
+                    return phase === 'day';
+                },
+
+                update() {
+                    const now = new Date();
+                    const phaseInfo = this.getCurrentPhase(now);
+
+                    let gradient = EARTH_GRADIENTS[phaseInfo.phase];
+
+                    if (phaseInfo.nextPhase && phaseInfo.blend !== undefined) {
+                        const nextGradient = EARTH_GRADIENTS[phaseInfo.nextPhase];
+                        gradient = this.blendGradients(gradient, nextGradient, phaseInfo.blend);
+                    }
+
+                    if (skyGradient) {
+                        skyGradient.style.background = this.buildGradient(gradient);
+                    }
+
+                    const wasNight = isNightMode;
+                    isNightMode = !this.isLightBackground(phaseInfo.phase);
+
+                    if (isNightMode !== wasNight) {
+                        this.updateNightModeUI();
+                    }
+
+                    CelestialBodies.render(now, phaseInfo);
+                },
+
+                updateNightModeUI() {
+                    const elements = [
+                        document.getElementById('locationSelector'),
+                        document.querySelector('.page-title'),
+                        document.querySelector('.countdown-card')
+                    ];
+
+                    elements.forEach(el => {
+                        if (el) {
+                            if (isNightMode) el.classList.add('night-mode');
+                            else el.classList.remove('night-mode');
+                        }
+                    });
+
+                    // Update text colors for all relevant elements
+                    const textColor = isNightMode ? TEXT_COLORS.dark : TEXT_COLORS.light;
+                    document.querySelectorAll('.countdown-label, .time-label, .progress-text, .page-title .subtitle').forEach(el => {
+                        el.style.color = textColor;
+                    });
+                }
+            };
+
+            // ============ PNG Weather Elements Manager ============
+            const PNGWeatherElements = {
+                currentWeatherType: 'clear',
+
+                // Update sun/moon position based on time phase (fixed positions per phase)
+                updateCelestialPosition(sunPos, isDay, phaseInfo) {
+                    const w = window.innerWidth;
+                    const h = window.innerHeight;
+
+                    // Fixed positions based on time phase (simplified to 2 periods)
+                    // Left = West, Right = East
+                    // Sun/Moon: rise from east(right) -> noon(center-high) -> set to west(left)
+                    const positions = {
+                        // Sun position - slightly right of center
+                        'day':       { x: 0.58, y: 0.12 },
+                        // Moon position - slightly left of center
+                        'night':     { x: 0.42, y: 0.15 }
+                    };
+
+                    const phase = phaseInfo.phase;
+                    let pos;
+
+                    if (isDay) {
+                        pos = positions[phase] || positions['day'];
+                    } else {
+                        pos = positions[phase] || positions['night'];
+                    }
+
+                    const x = w * pos.x;
+                    const y = h * pos.y;
+
+                    // Check if sun/moon should be visible based on weather
+                    const shouldShow = this.shouldShowCelestial();
+
+                    // Sun size is 200px (doubled from 100px), offset by half
+                    // Shift sun to the right by 80px to avoid being blocked by title
+                    if (isDay && weatherSunEl) {
+                        weatherSunEl.style.left = `${x - 100 + 80}px`;
+                        weatherSunEl.style.top = `${y - 100}px`;
+                        if (shouldShow) {
+                            weatherSunEl.classList.add('visible');
+                        } else {
+                            weatherSunEl.classList.remove('visible');
+                        }
+                        if (weatherMoonEl) weatherMoonEl.classList.remove('visible');
+                    } else if (weatherMoonEl) {
+                        // Moon size is 160px (doubled from 80px), offset by half
+                        // Shift moon to the left by 80px to avoid being blocked by title
+                        weatherMoonEl.style.left = `${x - 80 - 80}px`;
+                        weatherMoonEl.style.top = `${y - 80}px`;
+                        if (shouldShow) {
+                            weatherMoonEl.classList.add('visible');
+                        } else {
+                            weatherMoonEl.classList.remove('visible');
+                        }
+                        if (weatherSunEl) weatherSunEl.classList.remove('visible');
+                    }
+                },
+
+                // Check if sun/moon should be visible based on weather
+                shouldShowCelestial() {
+                    const hiddenWeathers = ['overcast', 'rain-light', 'rain-medium', 'rain-heavy',
+                                           'snow-light', 'snow-medium', 'snow-heavy', 'thunderstorm'];
+                    return !hiddenWeathers.includes(this.currentWeatherType);
+                },
+
+                // Generate clouds (only in top 5%-30% area) - doubled size, drift from left to right
+                generateClouds(count, behindCelestial = false) {
+                    if (!cloudsContainer) return;
+                    cloudsContainer.innerHTML = '';
+
+                    // If clouds should be in front of sun/moon (cloudy weather)
+                    if (behindCelestial) {
+                        cloudsContainer.style.zIndex = '1';
+                    } else {
+                        cloudsContainer.style.zIndex = '0';
+                    }
+
+                    for (let i = 0; i < count; i++) {
+                        const cloud = document.createElement('img');
+                        cloud.src = 'weather_png/cloud.png';
+                        cloud.className = 'weather-cloud';
+                        // Doubled size: 120-280px (was 60-140px)
+                        cloud.style.width = `${120 + Math.random() * 160}px`;
+                        // Start from left side (will animate across screen)
+                        cloud.style.left = '0';
+                        // Only in top 5%-30% area
+                        cloud.style.top = `${5 + Math.random() * 25}%`;
+                        // Slow drift: 60-120 seconds to cross the screen
+                        cloud.style.animationDuration = `${60 + Math.random() * 60}s`;
+                        // Random delay so clouds don't all start together
+                        cloud.style.animationDelay = `${-Math.random() * 60}s`;
+                        cloudsContainer.appendChild(cloud);
+                    }
+                },
+
+                // Generate rain - doubled size, slower fall
+                generateRain(count) {
+                    if (!rainContainer) return;
+                    rainContainer.innerHTML = '';
+
+                    for (let i = 0; i < count; i++) {
+                        const drop = document.createElement('img');
+                        drop.src = 'weather_png/waterdrop.png';
+                        drop.className = 'weather-raindrop';
+                        // Doubled size: 20-40px (was 10-20px)
+                        drop.style.width = `${20 + Math.random() * 20}px`;
+                        drop.style.left = `${Math.random() * 100}%`;
+                        // Slower fall: 3-5s (was 1-2.5s)
+                        drop.style.animationDuration = `${3 + Math.random() * 2}s`;
+                        drop.style.animationDelay = `${Math.random() * 3}s`;
+                        rainContainer.appendChild(drop);
+                    }
+                },
+
+                // Generate snow - doubled size, slower fall
+                generateSnow(count) {
+                    if (!snowContainer) return;
+                    snowContainer.innerHTML = '';
+
+                    for (let i = 0; i < count; i++) {
+                        const flake = document.createElement('img');
+                        flake.src = 'weather_png/snow.png';
+                        flake.className = 'weather-snowflake';
+                        // Doubled size: 30-70px (was 15-35px)
+                        flake.style.width = `${30 + Math.random() * 40}px`;
+                        flake.style.left = `${Math.random() * 100}%`;
+                        // Slower fall: 8-14s (was 4-8s)
+                        flake.style.animationDuration = `${8 + Math.random() * 6}s`;
+                        flake.style.animationDelay = `${Math.random() * 5}s`;
+                        snowContainer.appendChild(flake);
+                    }
+                },
+
+                // Set weather effect
+                setWeather(weatherType) {
+                    this.currentWeatherType = weatherType;
+
+                    // Clear all effects
+                    if (cloudsContainer) cloudsContainer.innerHTML = '';
+                    if (rainContainer) rainContainer.innerHTML = '';
+                    if (snowContainer) snowContainer.innerHTML = '';
+
+                    switch(weatherType) {
+                        case 'clear':
+                            // Clear: no clouds
+                            break;
+                        case 'cloudy':
+                            // Cloudy: 6 clouds in front of sun/moon (blocking)
+                            this.generateClouds(6, true);
+                            break;
+                        case 'overcast':
+                            // Overcast: 12 clouds, hiding sun/moon
+                            this.generateClouds(12, true);
+                            break;
+                        case 'rain-light':
+                            // Light rain: no clouds, only raindrops
+                            this.generateRain(15);
+                            break;
+                        case 'rain-medium':
+                            // Medium rain: no clouds, only raindrops
+                            this.generateRain(30);
+                            break;
+                        case 'rain-heavy':
+                        case 'thunderstorm':
+                            // Heavy rain/thunderstorm: no clouds, only raindrops
+                            this.generateRain(50);
+                            break;
+                        case 'snow-light':
+                            // Light snow: no clouds, only snowflakes
+                            this.generateSnow(10);
+                            break;
+                        case 'snow-medium':
+                            // Medium snow: no clouds, only snowflakes
+                            this.generateSnow(25);
+                            break;
+                        case 'snow-heavy':
+                            // Heavy snow: no clouds, only snowflakes
+                            this.generateSnow(40);
+                            break;
+                    }
+
+                    // Update celestial visibility
+                    if (!this.shouldShowCelestial()) {
+                        this.hideCelestial();
+                    }
+                },
+
+                // Hide sun and moon
+                hideCelestial() {
+                    if (weatherSunEl) weatherSunEl.classList.remove('visible');
+                    if (weatherMoonEl) weatherMoonEl.classList.remove('visible');
+                }
+            };
+
+            // ============ Weather Module ============
+            const WeatherModule = {
+                weatherCodes: {
+                    0: { icon: '☀️', desc: '晴', overlay: null },
+                    1: { icon: '🌤️', desc: '少云', overlay: null },
+                    2: { icon: '⛅', desc: '多云', overlay: 'cloudy' },
+                    3: { icon: '☁️', desc: '阴', overlay: 'overcast' },
+                    45: { icon: '🌫️', desc: '雾', overlay: 'overcast' },
+                    48: { icon: '🌫️', desc: '霜雾', overlay: 'overcast' },
+                    51: { icon: '🌧️', desc: '小雨', overlay: 'rain', effect: 'rain-light' },
+                    53: { icon: '🌧️', desc: '中雨', overlay: 'rain', effect: 'rain-medium' },
+                    55: { icon: '🌧️', desc: '大雨', overlay: 'rain', effect: 'rain-heavy' },
+                    61: { icon: '🌧️', desc: '小雨', overlay: 'rain', effect: 'rain-light' },
+                    63: { icon: '🌧️', desc: '中雨', overlay: 'rain', effect: 'rain-medium' },
+                    65: { icon: '🌧️', desc: '大雨', overlay: 'rain', effect: 'rain-heavy' },
+                    71: { icon: '🌨️', desc: '小雪', overlay: 'snow', effect: 'snow-light' },
+                    73: { icon: '🌨️', desc: '中雪', overlay: 'snow', effect: 'snow-medium' },
+                    75: { icon: '❄️', desc: '大雪', overlay: 'snow', effect: 'snow-heavy' },
+                    77: { icon: '🌨️', desc: '雪粒', overlay: 'snow', effect: 'snow-light' },
+                    80: { icon: '🌦️', desc: '阵雨', overlay: 'rain', effect: 'rain-medium' },
+                    81: { icon: '🌧️', desc: '阵雨', overlay: 'rain', effect: 'rain-heavy' },
+                    82: { icon: '⛈️', desc: '暴雨', overlay: 'thunderstorm', effect: 'rain-heavy' },
+                    85: { icon: '🌨️', desc: '阵雪', overlay: 'snow', effect: 'snow-medium' },
+                    86: { icon: '❄️', desc: '暴雪', overlay: 'snow', effect: 'snow-heavy' },
+                    95: { icon: '⛈️', desc: '雷暴', overlay: 'thunderstorm', effect: 'rain-heavy' },
+                    96: { icon: '⛈️', desc: '冰雹雷暴', overlay: 'thunderstorm', effect: 'rain-heavy' },
+                    99: { icon: '⛈️', desc: '大冰雹雷暴', overlay: 'thunderstorm', effect: 'rain-heavy' }
+                },
+
+                async fetchWeather() {
+                    const { lat, lon } = currentLocation;
+                    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code,cloud_cover,is_day&timezone=auto`;
+
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) throw new Error('Weather API error');
+
+                        const data = await response.json();
+                        currentWeather = {
+                            temperature: Math.round(data.current.temperature_2m),
+                            weatherCode: data.current.weather_code,
+                            cloudCover: data.current.cloud_cover,
+                            isDay: data.current.is_day === 1
+                        };
+
+                        this.updateUI();
+                        this.applyWeatherEffects();
+                    } catch (error) {
+                        currentWeather = { temperature: 20, weatherCode: 0, cloudCover: 0, isDay: true };
+                        this.updateUI();
+                        this.applyWeatherEffects();
+                    }
+                },
+
+                updateUI() {
+                    if (!currentWeather) return;
+                    const info = this.weatherCodes[currentWeather.weatherCode] || this.weatherCodes[0];
+                    let icon = info.icon;
+                    if (!currentWeather.isDay && currentWeather.weatherCode <= 1) icon = '🌙';
+                    if (weatherIcon) weatherIcon.textContent = icon;
+                    if (temperature) temperature.textContent = `${currentWeather.temperature}°C`;
+                },
+
+                applyWeatherEffects() {
+                    if (!currentWeather) return;
+                    const info = this.weatherCodes[currentWeather.weatherCode] || this.weatherCodes[0];
+
+                    if (weatherOverlay) {
+                        weatherOverlay.className = 'weather-overlay';
+                        if (info.overlay) weatherOverlay.classList.add(info.overlay);
+                    }
+
+                    // Use PNG weather elements
+                    PNGWeatherElements.setWeather(info.effect || info.overlay || 'clear');
+                }
+            };
+
+            // ============ Celestial Bodies (Stars Only - Sun/Moon via PNG) ============
+            const CelestialBodies = {
+                initStars() {
+                    if (starsInitialized) return;
+                    starsInitialized = true;
+                    const w = skyCanvas ? skyCanvas.width : window.innerWidth;
+                    const h = skyCanvas ? skyCanvas.height : window.innerHeight;
+                    stars = [];
+                    for (let i = 0; i < 150; i++) {
+                        stars.push({
+                            x: Math.random() * w,
+                            y: Math.random() * h * 0.7,
+                            size: Math.random() * 2 + 0.5,
+                            brightness: Math.random(),
+                            twinkleSpeed: Math.random() * 0.05 + 0.02,
+                            twinklePhase: Math.random() * Math.PI * 2
+                        });
+                    }
+                },
+
+                render(date, phaseInfo) {
+                    if (!skyCanvas || !skyCtx) return;
+                    skyCtx.clearRect(0, 0, skyCanvas.width, skyCanvas.height);
+
+                    const sunTimes = SunCalculator.getTimes(date, currentLocation.lat, currentLocation.lon);
+                    const sunPos = SunCalculator.getSunPosition(date, sunTimes);
+
+                    // Determine if it's day or night (simplified to 2 periods)
+                    const isDay = phaseInfo.phase === 'day';
+
+                    // Update PNG sun/moon position
+                    PNGWeatherElements.updateCelestialPosition(sunPos, isDay, phaseInfo);
+
+                    // Render stars only at night
+                    if (phaseInfo.phase === 'night') {
+                        this.renderStars(1);
+                    }
+                },
+
+                renderStars(opacity) {
+                    if (opacity <= 0) return;
+                    this.initStars();
+                    skyCtx.save();
+                    for (const star of stars) {
+                        star.twinklePhase += star.twinkleSpeed;
+                        const twinkle = 0.5 + 0.5 * Math.sin(star.twinklePhase);
+                        skyCtx.globalAlpha = opacity * star.brightness * twinkle;
+                        skyCtx.fillStyle = '#f5e6d3'; // Warm star color
+                        skyCtx.beginPath();
+                        skyCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                        skyCtx.fill();
+                    }
+                    skyCtx.restore();
+                }
+            };
+
+            // ============ Canvas Resize Handler ============
+            function resizeAllCanvases() {
+                // Only resize the sky canvas (for stars)
+                if (skyCanvas) {
+                    skyCanvas.width = window.innerWidth;
+                    skyCanvas.height = window.innerHeight;
+                }
+                starsInitialized = false;
+            }
+
+            // ============ Animation Loop ============
+            let lastUpdateTime = 0;
+            const UPDATE_INTERVAL = 1000;
+
+            function animateSky(timestamp) {
+                if (timestamp - lastUpdateTime >= UPDATE_INTERVAL) {
+                    SkyRenderer.update();
+                    lastUpdateTime = timestamp;
+                } else {
+                    const now = new Date();
+                    const phaseInfo = SkyRenderer.getCurrentPhase(now);
+                    CelestialBodies.render(now, phaseInfo);
+                }
+                requestAnimationFrame(animateSky);
+            }
+
+            // ============ Initialize Sky System ============
+            function initSkySystem() {
+                resizeAllCanvases();
+                window.addEventListener('resize', resizeAllCanvases);
+
+                LocationModule.init();
+                // Initialize with clear weather
+                PNGWeatherElements.setWeather('clear');
+
+                WeatherModule.fetchWeather();
+                SkyRenderer.update();
+
+                requestAnimationFrame(animateSky);
+                setInterval(() => WeatherModule.fetchWeather(), 10 * 60 * 1000);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initSkySystem);
+            } else {
+                initSkySystem();
+            }
+
+            // ============ Expose API for Test Panel ============
+            window.SkyTestAPI = {
+                setPhase(phase) {
+                    window._testPhaseOverride = phase === 'auto' ? null : phase;
+                    SkyRenderer.update();
+                },
+                setWeather(effect) {
+                    if (effect === 'auto') {
+                        window._testWeatherOverride = null;
+                        WeatherModule.fetchWeather();
+                    } else {
+                        window._testWeatherOverride = effect;
+                        if (weatherOverlay) {
+                            weatherOverlay.className = 'weather-overlay';
+                            if (effect === 'cloudy') weatherOverlay.classList.add('cloudy');
+                            else if (effect === 'overcast') weatherOverlay.classList.add('overcast');
+                            else if (effect.startsWith('rain')) weatherOverlay.classList.add('rain');
+                            else if (effect.startsWith('snow')) weatherOverlay.classList.add('snow');
+                            else if (effect === 'thunderstorm') weatherOverlay.classList.add('thunderstorm');
+                        }
+                        // Use PNG weather elements
+                        PNGWeatherElements.setWeather(effect);
+                    }
+                    // Trigger celestial position update
+                    SkyRenderer.update();
+                },
+                getSunTimes() {
+                    const now = new Date();
+                    return SunCalculator.getTimes(now, currentLocation.lat, currentLocation.lon);
+                },
+                getCurrentPhase() {
+                    const now = new Date();
+                    return SkyRenderer.getCurrentPhase(now);
+                },
+                isNightMode() {
+                    return isNightMode;
+                }
+            };
+
+            // Override getCurrentPhase to support test mode
+            const originalGetCurrentPhase = SkyRenderer.getCurrentPhase.bind(SkyRenderer);
+            SkyRenderer.getCurrentPhase = function(date) {
+                if (window._testPhaseOverride) {
+                    return { phase: window._testPhaseOverride, progress: 0.5 };
+                }
+                return originalGetCurrentPhase(date);
+            };
+        })();
+    </script>
+</body>
+</html>
